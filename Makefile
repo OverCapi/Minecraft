@@ -33,7 +33,9 @@ SRCS_CPP		= main.cpp \
 				  GL_Wrapper/VertexArray.cpp \
 				  GL_Wrapper/Shader.cpp \
 				  GL_Wrapper/Texture2D.cpp \
-				  Window/Window.cpp
+				  Window/Window.cpp \
+				  Camera.cpp \
+				  Block.cpp
 IMGUI_SRCS		= imgui.cpp \
 				  imgui_demo.cpp \
 				  imgui_draw.cpp \

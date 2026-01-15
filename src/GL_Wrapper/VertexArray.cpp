@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/11 23:07:23 by capi              #+#    #+#             */
-/*   Updated: 2026/01/12 17:53:18 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/15 21:59:45 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,14 +54,14 @@ void	VertexArray::AddVertexBuffer(const VertexBuffer& vertexBuffer, BufferLayout
 		));
 		offset += GetTypeSize(layout.type) * layout.count;
 	}
-	this->bind();
-	vertexBuffer.bind();
+	this->unbind();
+	vertexBuffer.unbind();
 }
 
 void	VertexArray::AddElementBuffer(const ElementBuffer& elementBuffer)
 {
 	this->bind();
 	elementBuffer.bind();
-	this->bind();
-	elementBuffer.bind();
+	this->unbind();
+	elementBuffer.unbind();
 }

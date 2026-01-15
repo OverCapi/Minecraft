@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 17:09:50 by capi              #+#    #+#             */
-/*   Updated: 2026/01/14 19:30:57 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/15 23:36:33 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 # include <stdexcept>
 
 # include <glad/glad.h>
+
+// #define DEV
 
 #ifdef DEV
 # define GLCall(x)\
