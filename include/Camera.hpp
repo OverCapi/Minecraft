@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 22:22:19 by capi              #+#    #+#             */
-/*   Updated: 2026/01/16 00:16:25 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/16 22:51:07 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@ class Camera
 		glm::vec3&	getDir(void) { return (this->_dir); };
 		glm::vec3&	getRight(void) { return (this->_right); };
 		glm::vec3&	getUp(void) { return (this->_up); };
+		float&		getYaw(void) { return (this->_yaw); };
+		float&		getPitch(void) { return (this->_pitch); };
 	private:
 		glm::vec3	_pos;
 		

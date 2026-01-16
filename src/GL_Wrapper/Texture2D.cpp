@@ -6,14 +6,11 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 18:03:02 by capi              #+#    #+#             */
-/*   Updated: 2026/01/14 19:37:43 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/16 15:24:39 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "GL_Wrapper/Texture2D.hpp"
-
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
 
 using namespace GL_Wrapper;
 

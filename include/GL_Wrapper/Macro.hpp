@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 17:09:50 by capi              #+#    #+#             */
-/*   Updated: 2026/01/15 23:36:33 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/16 20:01:30 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,8 @@ namespace GL_Wrapper
 		{
 			case GL_FLOAT:
 				return (sizeof(float));
+			case GL_UNSIGNED_INT:
+				return (sizeof(unsigned int));
 		}
 		throw std::runtime_error("GetTypeSize invalid Type");
 		return (0);

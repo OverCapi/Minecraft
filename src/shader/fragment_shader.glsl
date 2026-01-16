@@ -1,10 +1,14 @@
 #version 330 core
 
-in vec4 vertexColor;
-
 out vec4 FragColor;
+
+in vec2	texCoord;
+in vec2	blockType;
+
+uniform sampler2DArray blockTexture;
 
 void	main()
 {
-	FragColor = vertexColor;
+	// FragColor = vec4(texCoord, 0, 1);
+	FragColor = texture(blockTexture, vec3(texCoord, blockType));
 }
