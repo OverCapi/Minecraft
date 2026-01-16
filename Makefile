@@ -20,8 +20,7 @@ FLASH		= \033[5m
 NEGATIF		= \033[7m
 
 SRCS_DIR	 = ./src/
-IMGUI_DIR	 = ./include/imgui/
-INCLUDES_DIR = ./include/ ./include/imgui ./include/imgui/backends
+INCLUDES_DIR = ./include/ ./extern ./extern/imgui ./extern/imgui/backends
 LIBS_DIR 	 = ./lib/
 OBJS_DIR	 = ./objs/
 
@@ -36,6 +35,8 @@ SRCS_CPP		= main.cpp \
 				  Window/Window.cpp \
 				  Camera.cpp \
 				  Block.cpp
+
+IMGUI_DIR		= ./extern/imgui/
 IMGUI_SRCS		= imgui.cpp \
 				  imgui_demo.cpp \
 				  imgui_draw.cpp \
@@ -43,9 +44,12 @@ IMGUI_SRCS		= imgui.cpp \
 				  imgui_widgets.cpp \
 				  backends/imgui_impl_glfw.cpp \
 				  backends/imgui_impl_opengl3.cpp
-SRCS_C			= glad.c
-OBJS			= $(addprefix ${OBJS_DIR}, $(SRCS_CPP:.cpp=.o) $(SRCS_C:.c=.o)) \
-				  $(addprefix ${OBJS_DIR}imgui/, $(IMGUI_SRCS:.cpp=.o))
+
+GLAD_DIR		= ./extern/glad/
+GLAD_SRC		= glad.c
+OBJS			= $(addprefix ${OBJS_DIR}, $(SRCS_CPP:.cpp=.o)) \
+				  $(addprefix ${OBJS_DIR}extern/imgui/, $(IMGUI_SRCS:.cpp=.o)) \
+				  $(addprefix ${OBJS_DIR}extern/glad/, $(GLAD_SRC:.c=.o))
 
 
 TARGET = ft_minecraft
@@ -63,21 +67,30 @@ ${OBJS_DIR}%.o: ${SRCS_DIR}%.cpp
 	@c++ ${COMMON_FLAG} $(addprefix -I , ${INCLUDES_DIR}) -c $< -o $@
 	@echo "${YELLOW}$@ is compiled ! ✅${RESET}"
 
-${OBJS_DIR}%.o: ${SRCS_DIR}%.c
+${OBJS_DIR}extern/imgui/%.o: ${IMGUI_DIR}%.cpp
+	@c++ ${COMMON_FLAG} $(addprefix -I , ${INCLUDES_DIR}) -c $< -o $@
+	@echo "${YELLOW}$@ is compiled ! ✅${RESET}"
+
+${OBJS_DIR}extern/glad/%.o: ${GLAD_DIR}%.c
 	@cc ${COMMON_FLAG} $(addprefix -I , ${INCLUDES_DIR}) -c $< -o $@
 	@echo "${YELLOW}$@ is compiled ! ✅${RESET}"
 
-${OBJS_DIR}imgui/%.o: ${IMGUI_DIR}%.cpp
-	@c++ ${COMMON_FLAG} $(addprefix -I , ${INCLUDES_DIR}) -c $< -o $@
-	@echo "${YELLOW}$@ is compiled ! ✅${RESET}"
+# ${OBJS_DIR}imgui/%.o: ${IMGUI_DIR}%.cpp
+# 	@c++ ${COMMON_FLAG} $(addprefix -I , ${INCLUDES_DIR}) -c $< -o $@
+# 	@echo "${YELLOW}$@ is compiled ! ✅${RESET}"
+
+# ${OBJS_DIR}glad/%.o: ${GLAD_DIR}%.cpp
+# 	@c++ ${COMMON_FLAG} $(addprefix -I , ${INCLUDES_DIR}) -c $< -o $@
+# 	@echo "${YELLOW}$@ is compiled ! ✅${RESET}"
 
 ${OBJS_DIR}:
 	@mkdir -p ./objs
 	@mkdir -p ./objs/GLFW_Wrapper
 	@mkdir -p ./objs/GL_Wrapper
 	@mkdir -p ./objs/Window
-	@mkdir -p ./objs/imgui
-	@mkdir -p ./objs/imgui/backends
+	@mkdir -p ./objs/extern/glad
+	@mkdir -p ./objs/extern/imgui
+	@mkdir -p ./objs/extern/imgui/backends
 
 clean:
 	@rm -rf objs
