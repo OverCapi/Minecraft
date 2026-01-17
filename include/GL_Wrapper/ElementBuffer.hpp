@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/11 22:58:10 by capi              #+#    #+#             */
-/*   Updated: 2026/01/12 17:52:04 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/17 16:54:09 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ namespace GL_Wrapper
 	class ElementBuffer
 	{
 		public:
+			ElementBuffer(void) {};
 			ElementBuffer(const unsigned int *data, size_t count);
 			~ElementBuffer(void);
 

@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 17:20:53 by capi              #+#    #+#             */
-/*   Updated: 2026/01/15 23:39:39 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/17 16:15:48 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,7 @@ void	Shader::use(void) const
 
 void	Shader::setBool(const std::string &name, bool value) const
 {
-	int location = GLCallThrow(glGetUniformLocation(this->_id, name.c_str()));
+	int location = glGetUniformLocation(this->_id, name.c_str());
 	GLCallThrow(glUniform1i(location, (int)value));
 }
 

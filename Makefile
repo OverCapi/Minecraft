@@ -35,7 +35,8 @@ SRCS_CPP		= main.cpp \
 				  GL_Wrapper/Texture2DArray.cpp \
 				  Window/Window.cpp \
 				  Camera.cpp \
-				  Block.cpp
+				  Block.cpp \
+				  Chunk.cpp
 
 IMGUI_DIR		= ./extern/imgui/
 IMGUI_SRCS		= imgui.cpp \

@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/11 21:39:41 by capi              #+#    #+#             */
-/*   Updated: 2026/01/16 22:19:07 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/17 15:51:47 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 # include <iostream>
 # include <stdexcept>
 
-#  define STB_IMAGE_IMPLEMENTATION
+# define STB_IMAGE_IMPLEMENTATION
 
 # include "GL_Wrapper/Macro.hpp"
 # include "GL_Wrapper/VertexBuffer.hpp"

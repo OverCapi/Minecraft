@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 14:42:27 by capi              #+#    #+#             */
-/*   Updated: 2026/01/16 22:28:16 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/17 17:44:42 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,15 @@
 
 # include <glm/glm.hpp>
 
-typedef enum BlockType
+# include "GL_Wrapper/Shader.hpp"
+# include "GL_Wrapper/VertexBuffer.hpp"
+# include "GL_Wrapper/ElementBuffer.hpp"
+# include "GL_Wrapper/VertexArray.hpp"
+
+typedef enum BlockId
 {
 	GRASS_BLOCK = 1
-}	BlockType;
+}	BlockId;
 
 typedef enum TextureId
 {
@@ -40,18 +45,22 @@ typedef struct BlockVertex
 class Block
 {
 	public:
-		static const float vertices[BLOCK_VERTICES * (3 + 2)];
+		static const float			vertices[5 * 4 * 6];
+		static const unsigned int	indices[BLOCK_VERTICES];
 
 	public:
-		Block(BlockType	type, const glm::vec3& worldPos, const std::array<TextureId, 6>& face_texture);
+		Block(BlockId	type, const glm::vec3& worldPos, const std::array<TextureId, 6>& face_texture);
 		~Block(void);
 
-		std::array<BlockVertex, 36>&	getVerticesData(void);
+		void	draw(GL_Wrapper::Shader& shader) const;
 	private:
-		BlockType					_type;
+		BlockId						_type;
 		glm::vec3					_worldPos;
-		std::array<BlockVertex, 36>	_block_vertices;
 		std::array<TextureId, 6>	_textureIdFace;
+
+		GL_Wrapper::VertexBuffer	*_vb;		
+		GL_Wrapper::ElementBuffer	*_eb;		
+		GL_Wrapper::VertexArray		*_va;	
 };
 
 #endif

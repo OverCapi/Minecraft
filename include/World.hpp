@@ -1,19 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   stbi_image.hpp                                     :+:      :+:    :+:   */
+/*   World.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/01/16 15:24:11 by capi              #+#    #+#             */
-/*   Updated: 2026/01/17 15:51:39 by capi             ###   ########.fr       */
+/*   Created: 2026/01/17 14:46:40 by capi              #+#    #+#             */
+/*   Updated: 2026/01/17 14:46:52 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef STBI_IMAGE_HPP
-# define STBI_IMAGE_HPP
+#ifndef WORLD_HPP
+# define WORLD_HPP
 
-// # ifndef STB_IMAGE_IMPLEMENTATION
-# include "stb_image.h"
-// # endif
+class World
+{
+	public:
+
+	private:
+}
+
 #endif

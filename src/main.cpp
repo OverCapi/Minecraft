@@ -12,7 +12,7 @@
 
 #include "Window.hpp"
 #include "Camera.hpp"
-#include "Block.hpp"
+#include "Chunk.hpp"
 
 #define WIDTH 1920
 #define HEIGHT 1080
@@ -75,7 +75,8 @@ Window	init(void)
 	return (window);
 }
 
-void	render_imgui(Camera& camera)
+#define MAX_IMAGE 100
+void	render_imgui(Camera& camera, float delta_time)
 {
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
@@ -83,6 +84,9 @@ void	render_imgui(Camera& camera)
 
 	static bool	debug = false;
 	ImGui::Begin("Debug", &debug, 0);
+
+	ImGui::Text("FPS: %g", 1 / delta_time);
+
 	if (ImGui::CollapsingHeader("Camera"))
 	{
 		glm::vec3	cam_pos = camera.getPos();
@@ -109,7 +113,7 @@ void	render_imgui(Camera& camera)
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
-void	render(Camera& camera, VertexArray& va, Shader& shader, Texture2DArray& texture)
+void	render(Camera& camera, Shader& shader, Texture2DArray& texture, Chunk& chunk)
 {
 	camera.send_gpu(shader);
 	camera.update_vector();
@@ -117,10 +121,8 @@ void	render(Camera& camera, VertexArray& va, Shader& shader, Texture2DArray& tex
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	texture.use(0);
-	shader.use();
-	va.bind();
-	glDrawArrays(GL_TRIANGLES, 0, 36);
-	va.unbind();
+
+	chunk.draw(shader);
 }
 
 # define SPEED 2.5f
@@ -210,30 +212,10 @@ int	main(void)
 
 		Camera camera(glm::vec3(0, 0, 0), 90, 0);
 
-		Block	block(
-			GRASS_BLOCK,
-			glm::vec3(0, 0, 10), 
-			{ GRASS_BLOCK_SIDE, GRASS_BLOCK_SIDE, GRASS_BLOCK_SIDE, GRASS_BLOCK_SIDE, DIRT, GRASS_BLOCK_TOP }
-		);
-
-		std::array<BlockVertex, 36>block_data = block.getVerticesData();
-
-		VertexBuffer vb(block_data.data(), block_data.size() * sizeof(BlockVertex));
-		VertexArray va;
-
-		Layout layout_vpos = {GL_FLOAT, 3, GL_FALSE};
-		Layout layout_texture_coord = {GL_FLOAT, 2, GL_FALSE};
-		Layout layout_wpos = {GL_FLOAT, 3, GL_FALSE};
-		Layout layout_texture_id = {GL_UNSIGNED_INT, 1, GL_FALSE};
-		BufferLayout buffer_layout;
-		buffer_layout.addLayout(layout_vpos);
-		buffer_layout.addLayout(layout_texture_coord);
-		buffer_layout.addLayout(layout_wpos);
-		buffer_layout.addLayout(layout_texture_id);
-
-		va.AddVertexBuffer(vb, buffer_layout);
-
 		GLCallThrow(glEnable(GL_DEPTH_TEST));
+		
+		Chunk chunk(glm::vec3(0, 0, 0));
+		chunk.generate();
 
 		float delta_time = 0.0f;
 		float last_frame = 0.0f;
@@ -248,9 +230,9 @@ int	main(void)
 			process_input(delta_time, window.getGLFWWindow(), camera);
 			update_dir(camera);
 
-			render(camera, va, shader, texture);
+			render(camera, shader, texture, chunk);
 	
-			render_imgui(camera);
+			render_imgui(camera, delta_time);
 			
 			glfwSwapBuffers(window.getGLFWWindow());
 		}

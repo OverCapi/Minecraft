@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 22:22:02 by capi              #+#    #+#             */
-/*   Updated: 2026/01/16 22:37:42 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/17 14:45:02 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ Camera::Camera(glm::vec3 pos, float yaw, float pitch): _pos(pos), _yaw(yaw), _pi
 	this->_up = glm::normalize(glm::cross(this->_dir, this->_right));
 
 	this->_view = glm::lookAt(this->_pos, this->_pos + this->_dir, this->_up);
-	this->_projection = glm::perspective(glm::radians(45.0f), 1920.0f / 1080.0f, 0.1f, 100.0f);
+	this->_projection = glm::perspective(glm::radians(70.0f), 1920.0f / 1080.0f, 0.1f, 100.0f);
 }
 
 Camera::~Camera(void) {}
