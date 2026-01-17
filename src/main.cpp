@@ -12,12 +12,13 @@
 
 #include "Window.hpp"
 #include "Camera.hpp"
-#include "Chunk.hpp"
+#include "Renderer.hpp"
+#include "World.hpp"
 
 #define WIDTH 1920
 #define HEIGHT 1080
 
-float speed = 5.5f;
+float speed = 10.0f;
 
 using namespace GL_Wrapper;
 
@@ -50,7 +51,7 @@ Window	init(void)
 	Window window("ft_minecraft", WIDTH, HEIGHT);
 	// Make the OpenGL context current
 	glfwMakeContextCurrent(window.getGLFWWindow());
-	glfwSwapInterval(1); // Enable vsync
+	glfwSwapInterval(0); // Enable vsync
 
 	glfwSetInputMode(window.getGLFWWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
@@ -75,17 +76,28 @@ Window	init(void)
 	return (window);
 }
 
-#define MAX_IMAGE 100
-void	render_imgui(Camera& camera, float delta_time)
+void	render_imgui(Camera& camera, float delta_time, float render_time)
 {
+	static size_t	fps_sum = 0;
+	static size_t	nb_call = 1;
+
+	fps_sum += (size_t)(1 / delta_time);
+
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 
+	if (fps_sum > 0xF000000000000000)
+	{
+		fps_sum = 0;
+		nb_call = 0;
+	}
+
 	static bool	debug = false;
 	ImGui::Begin("Debug", &debug, 0);
 
-	ImGui::Text("FPS: %g", 1 / delta_time);
+	ImGui::Text("Avg: %zu, FPS: %g", fps_sum / nb_call++, 1 / delta_time);
+	ImGui::Text("Render time: %g ms", render_time * 1000);
 
 	if (ImGui::CollapsingHeader("Camera"))
 	{
@@ -111,18 +123,6 @@ void	render_imgui(Camera& camera, float delta_time)
 	// Rendering
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-}
-
-void	render(Camera& camera, Shader& shader, Texture2DArray& texture, Chunk& chunk)
-{
-	camera.send_gpu(shader);
-	camera.update_vector();
-	glClearColor(0.45f, 0.55f, 0.60f, 1.00f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	texture.use(0);
-
-	chunk.draw(shader);
 }
 
 # define SPEED 2.5f
@@ -199,23 +199,14 @@ int	main(void)
 	{
 		Window window = init();
 
+		GLCallThrow(glEnable(GL_DEPTH_TEST));
+
 		glViewport(0, 0, WIDTH*2, HEIGHT*2);
 
-		Shader shader("src/shader/vertex_shader.glsl", "src/shader/fragment_shader.glsl");
-		shader.use();
-		shader.setInt("blockTexture", 0);
+		Renderer renderer;
 
-		Texture2DArray texture(16, 16, 3, GL_RGBA);
-		texture.addTexture("assets/texture/block/dirt.png", GL_RGBA, true);
-		texture.addTexture("assets/texture/block/grass_side.png", GL_RGBA, true);
-		texture.addTexture("assets/texture/block/grass_top.png", GL_RGBA, true);
-
-		Camera camera(glm::vec3(0, 0, 0), 90, 0);
-
-		GLCallThrow(glEnable(GL_DEPTH_TEST));
-		
-		Chunk chunk(glm::vec3(0, 0, 0));
-		chunk.generate();
+		Camera camera(glm::vec3(0, 20, 0), 90, 0);
+		World world(camera);
 
 		float delta_time = 0.0f;
 		float last_frame = 0.0f;
@@ -227,12 +218,18 @@ int	main(void)
 			delta_time = current_frame - last_frame;
 			last_frame = current_frame;
 
-			process_input(delta_time, window.getGLFWWindow(), camera);
-			update_dir(camera);
+			process_input(delta_time, window.getGLFWWindow(), world.getCamera());
+			update_dir(world.getCamera());
 
-			render(camera, shader, texture, chunk);
+			world.update(delta_time);
+
+			float start_render = glfwGetTime();
+			renderer.render(world);
+			float end_render = glfwGetTime();
+
+			// render(camera, shader, texture, chunk);
 	
-			render_imgui(camera, delta_time);
+			render_imgui(camera, delta_time, end_render - start_render);
 			
 			glfwSwapBuffers(window.getGLFWWindow());
 		}

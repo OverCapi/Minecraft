@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 22:22:19 by capi              #+#    #+#             */
-/*   Updated: 2026/01/16 22:51:07 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/17 20:14:55 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,13 @@
 class Camera
 {
 	public:
+		Camera(void) {};
 		Camera(glm::vec3 pos, float yaw, float pitch);
 		~Camera(void);
 
-		void	send_gpu(GL_Wrapper::Shader& shader) const;
-		void	update_vector(void);
-		void	update_pos(glm::vec3 newPos);
+		void		send_gpu(GL_Wrapper::Shader& shader) const;
+		void		update_vector(void);
+		void		update_pos(glm::vec3 newPos);
 
 		glm::vec3&	getPos(void) { return (this->_pos); };
 		glm::vec3&	getDir(void) { return (this->_dir); };

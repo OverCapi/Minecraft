@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 14:42:27 by capi              #+#    #+#             */
-/*   Updated: 2026/01/17 17:44:42 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/17 22:03:02 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,8 @@
 
 typedef enum BlockId
 {
-	GRASS_BLOCK = 1
+	AIR = 0,
+	GRASS_BLOCK,
 }	BlockId;
 
 typedef enum TextureId
@@ -51,6 +52,8 @@ class Block
 	public:
 		Block(BlockId	type, const glm::vec3& worldPos, const std::array<TextureId, 6>& face_texture);
 		~Block(void);
+
+		BlockId	getBlockId(void) { return (this->_type); };
 
 		void	draw(GL_Wrapper::Shader& shader) const;
 	private:

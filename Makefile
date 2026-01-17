@@ -36,7 +36,9 @@ SRCS_CPP		= main.cpp \
 				  Window/Window.cpp \
 				  Camera.cpp \
 				  Block.cpp \
-				  Chunk.cpp
+				  Chunk.cpp \
+				  World.cpp \
+				  Renderer.cpp
 
 IMGUI_DIR		= ./extern/imgui/
 IMGUI_SRCS		= imgui.cpp \

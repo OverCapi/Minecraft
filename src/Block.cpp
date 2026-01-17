@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 14:41:57 by capi              #+#    #+#             */
-/*   Updated: 2026/01/17 17:44:30 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/17 22:01:59 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ const unsigned int	Block::indices[] = {
 };
 
 // Texture order : FRONT, BACK, RIGHT, LEFT, TOP, BOTTOM
-Block::Block(BlockId	type, const glm::vec3& worldPos, const std::array<TextureId, 6>& face_texture)
+Block::Block(BlockId type, const glm::vec3& worldPos, const std::array<TextureId, 6>& face_texture)
 : _type(type), _worldPos(worldPos), _textureIdFace(face_texture)
 {
 	(void)this->_type;
