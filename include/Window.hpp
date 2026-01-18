@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 22:57:54 by capi              #+#    #+#             */
-/*   Updated: 2026/01/14 23:20:27 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/18 17:32:11 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include <stdexcept>
 
+# define GLFW_INCLUDE_NONE
 # include <GLFW/glfw3.h>
 
 class Window

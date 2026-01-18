@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 22:22:19 by capi              #+#    #+#             */
-/*   Updated: 2026/01/17 20:14:55 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/18 17:31:37 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,10 @@
 # include <glm/glm.hpp>
 # include <glm/gtc/matrix_transform.hpp>
 
-# include "GL_Wrapper/Shader.hpp"
+# define GLFW_INCLUDE_NONE
+# include <GLFW/glfw3.h>
+
+extern float g_ImGui_speed;
 
 class Camera
 {
@@ -25,7 +28,8 @@ class Camera
 		Camera(glm::vec3 pos, float yaw, float pitch);
 		~Camera(void);
 
-		void		send_gpu(GL_Wrapper::Shader& shader) const;
+		void		process_input(GLFWwindow *window, float delta_time);
+
 		void		update_vector(void);
 		void		update_pos(glm::vec3 newPos);
 
@@ -35,6 +39,9 @@ class Camera
 		glm::vec3&	getUp(void) { return (this->_up); };
 		float&		getYaw(void) { return (this->_yaw); };
 		float&		getPitch(void) { return (this->_pitch); };
+
+		glm::mat4&	getView(void) { return (this->_view); };
+		glm::mat4&	getProjection(void) { return (this->_projection); };
 	private:
 		glm::vec3	_pos;
 		
@@ -48,7 +55,5 @@ class Camera
 		glm::mat4	_view;
 		glm::mat4	_projection;
 };
-
-std::ostream& operator << (std::ostream &out, Camera& cam);
 
 #endif

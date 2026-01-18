@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 20:06:07 by capi              #+#    #+#             */
-/*   Updated: 2026/01/18 16:28:13 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/18 17:35:17 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,14 +28,14 @@ Renderer::~Renderer(void) {}
 
 void	Renderer::render(World& world)
 {
+	Camera& camera = world.getCamera();
+	camera.update_vector();
+	this->send_info_gpu(camera);
+
 	glClearColor(0.45f, 0.55f, 0.60f, 1.00f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	this->_texture.use(0);
-
-	Camera& camera = world.getCamera();
-	camera.send_gpu(this->_shader);
-	camera.update_vector();
 
 	glm::vec3& cam_pos = camera.getPos();
 	int render_distance = world.getRenderDistance();
@@ -54,10 +54,11 @@ void	Renderer::render(World& world)
 	/*
 		For render distance of 2:
 
-		1 2 3
-		4 0 5
 		6 7 8
+		4 0 5
+		1 2 3
 	*/
+	// TODO Draw only chunks that are in front of the camera.
 	for (size_t circle = 0; circle < (size_t)render_distance; circle++)
 	{
 		for (size_t z = 0; z < 1 + 2 * circle; z++)
@@ -77,4 +78,10 @@ void	Renderer::render(World& world)
 			}
 		}
 	}
+}
+
+void	Renderer::send_info_gpu(Camera& camera)
+{
+	this->_shader.setMat4("view", camera.getView());
+	this->_shader.setMat4("projection", camera.getProjection());
 }

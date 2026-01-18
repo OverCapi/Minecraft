@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 14:46:29 by capi              #+#    #+#             */
-/*   Updated: 2026/01/18 16:46:03 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/18 17:06:24 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,9 @@ void	World::update(float delta_time)
 	/*
 		For render distance of 2:
 
-		1 2 3
-		4 0 5
 		6 7 8
+		4 0 5
+		1 2 3
 	*/
 	size_t new_chunk = 0;
 	for (size_t circle = 0; circle < (size_t)this->_renderDirstance; circle++)

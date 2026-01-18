@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 22:22:02 by capi              #+#    #+#             */
-/*   Updated: 2026/01/17 14:45:02 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/18 17:22:42 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,37 @@ Camera::Camera(glm::vec3 pos, float yaw, float pitch): _pos(pos), _yaw(yaw), _pi
 
 Camera::~Camera(void) {}
 
-void	Camera::send_gpu(GL_Wrapper::Shader& shader) const
+void	Camera::process_input(GLFWwindow *window, float delta_time)
 {
-	shader.setMat4("view", this->_view);
-	shader.setMat4("projection", this->_projection);
+	float velocity = g_ImGui_speed * delta_time;
+
+	glm::vec3 dir_xz = glm::normalize(glm::vec3(this->_dir.x, 0.0, this->_dir.z));
+	glm::vec3 right_xz = glm::normalize(glm::vec3(this->_right.x, 0.0, this->_right.z));
+
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+	{
+		this->_pos += dir_xz * velocity;
+	}
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+	{
+		this->_pos -= dir_xz * velocity;
+	}
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+	{
+		this->_pos -= right_xz * velocity;
+	}
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+	{
+		this->_pos += right_xz * velocity;
+	}
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+	{
+		this->_pos += glm::vec3(0, 1, 0) * velocity;
+	}
+	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+	{
+		this->_pos -= glm::vec3(0, 1, 0) * velocity;
+	}
 }
 
 void	Camera::update_pos(glm::vec3 newPos)
@@ -59,17 +86,4 @@ void	Camera::update_vector(void)
 
 	this->_view = glm::lookAt(this->_pos, this->_pos + this->_dir, this->_up);
 	this->_projection = glm::perspective(glm::radians(45.0f), 1920.0f / 1080.0f, 0.1f, 100.0f);	
-}
-
-std::ostream& operator << (std::ostream &out, Camera& cam)
-{
-	glm::vec3 pos = cam.getPos();
-	glm::vec3 dir = cam.getDir();
-	glm::vec3 right = cam.getRight();
-	
-	out << "Pos: (" << pos.x << ", " << pos.y << ", " << pos.z << ")" << std::endl;
-	out << "Dir: (" << dir.x << ", " << dir.y << ", " << dir.z << ")" << std::endl;
-	out << "Right: (" << right.x << ", " << right.y << ", " << right.z << ")" << std::endl;
-
-	return (out);
 }

@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 14:47:06 by capi              #+#    #+#             */
-/*   Updated: 2026/01/18 16:50:37 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/18 17:25:19 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@
 # include "GL_Wrapper/VertexArray.hpp"
 
 # include "Block.hpp"
-#include "World.hpp"
+#include  "World.hpp"
 
 # define CHUNK_SIZE 16
 

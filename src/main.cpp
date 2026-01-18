@@ -1,7 +1,6 @@
 # include <iostream>
 
 # include <glad/glad.h>
-# include <GLFW/glfw3.h>
 # include <glm/glm.hpp>
 
 #include "imgui.h"
@@ -15,10 +14,13 @@
 #include "Renderer.hpp"
 #include "World.hpp"
 
+# define GLFW_INCLUDE_NONE
+# include <GLFW/glfw3.h>
+
 #define WIDTH 1920
 #define HEIGHT 1080
 
-float speed = 10.0f;
+float g_ImGui_speed = 15.0f;
 
 using namespace GL_Wrapper;
 
@@ -113,7 +115,7 @@ void	render_imgui(Camera& camera, float delta_time, float render_time)
 		glm::vec3	cam_up = camera.getUp();
 		ImGui::Text("Up: (%g, %g, %g)", cam_up.x, cam_up.y, cam_up.z);
 
-		ImGui::SliderFloat("Speed", &speed, 0, 100);
+		ImGui::SliderFloat("Speed", &g_ImGui_speed, 0, 100);
 	}
 	ImGui::End();
 
@@ -129,41 +131,15 @@ void	render_imgui(Camera& camera, float delta_time, float render_time)
 
 void	process_input(float dt, GLFWwindow *window, Camera& camera)
 {
-	float velocity = speed * dt;
-	// std::cout << "velocity: " << velocity << std::endl;
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
-
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-	{
-		camera.getPos() += camera.getDir() * (velocity);
-	}
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-	{
-		camera.getPos() -= camera.getDir() * (velocity);
-	}
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-	{
-		camera.getPos() -= glm::normalize(camera.getRight()) * velocity;
-	}
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-	{
-		camera.getPos() += glm::normalize(camera.getRight()) * velocity;
-	}
-	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-	{
-		camera.getPos() += glm::normalize(camera.getUp()) * velocity;
-	}
-	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-	{
-		camera.getPos() -= glm::normalize(camera.getUp()) * velocity;
-	}
 	if (glfwGetKey(window, GLFW_KEY_RIGHT_ALT) == GLFW_PRESS)
 	{
 		static bool lock_cursor = true;
 		glfwSetInputMode(window, GLFW_CURSOR, lock_cursor ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_CAPTURED);
 		lock_cursor = !lock_cursor;
 	}
+	camera.process_input(window, dt);
 }
 
 void	update_dir(Camera& camera)
