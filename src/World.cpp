@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 14:46:29 by capi              #+#    #+#             */
-/*   Updated: 2026/01/18 16:28:31 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/18 16:46:03 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,13 +63,13 @@ void	World::update(float delta_time)
 				if (this->_chunkMap.find(render_chunk_pos.x) == this->_chunkMap.end())
 				{
 					this->_chunkMap.insert(std::pair<int, std::map<int, Chunk*> >(render_chunk_pos.x, std::map<int, Chunk*>()));
-					this->_chunkMap.at(render_chunk_pos.x).insert(std::pair<int, Chunk*>(render_chunk_pos.z, new Chunk(render_chunk_pos)));
+					this->_chunkMap.at(render_chunk_pos.x).insert(std::pair<int, Chunk*>(render_chunk_pos.z, new Chunk(this, render_chunk_pos)));
 					this->_chunkMap.at(render_chunk_pos.x).at(render_chunk_pos.z)->generate();
 					new_chunk++;
 				} 
 				else if (this->_chunkMap.at(render_chunk_pos.x).find(render_chunk_pos.z) == this->_chunkMap.at(render_chunk_pos.x).end()) 
 				{
-					this->_chunkMap.at(render_chunk_pos.x).insert(std::pair<int, Chunk*>(render_chunk_pos.z, new Chunk(render_chunk_pos)));
+					this->_chunkMap.at(render_chunk_pos.x).insert(std::pair<int, Chunk*>(render_chunk_pos.z, new Chunk(this, render_chunk_pos)));
 					this->_chunkMap.at(render_chunk_pos.x).at(render_chunk_pos.z)->generate();
 					new_chunk++;
 				}

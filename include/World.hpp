@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 14:46:40 by capi              #+#    #+#             */
-/*   Updated: 2026/01/17 21:11:43 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/18 16:59:15 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@
 
 # include "Camera.hpp"
 # include "Chunk.hpp"
+
+class Chunk;
 
 class World
 {

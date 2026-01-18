@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 14:47:06 by capi              #+#    #+#             */
-/*   Updated: 2026/01/18 16:27:55 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/18 16:50:37 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,19 +25,26 @@
 # include "GL_Wrapper/VertexArray.hpp"
 
 # include "Block.hpp"
+#include "World.hpp"
 
 # define CHUNK_SIZE 16
+
+class World;
 
 class Chunk
 {
 	public:
-		Chunk(const glm::vec3& worldPos);
+		Chunk(World *_associateWorld, const glm::vec3& worldPos);
 		~Chunk(void);
 
 		void	generate(void);
 		void	render(void);
 		void	draw(GL_Wrapper::Shader& shader);
+
+		BlockId	getBlock(int x, int y, int z) const { return (this->_blocks[z][y][x]); };
 	private:
+		World		*_associateWorld;
+
 		glm::vec3	_worldPos;
 
 		BlockId	_blocks[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
