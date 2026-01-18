@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 14:46:27 by capi              #+#    #+#             */
-/*   Updated: 2026/01/17 22:34:13 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/18 15:14:11 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,47 +16,102 @@ Chunk::Chunk(const glm::vec3& worldPos)
 : _worldPos(worldPos)
 {}
 
-Chunk::~Chunk(void) {}
+Chunk::~Chunk(void)
+{
+	delete this->_vb;
+	delete this->_eb;
+	delete this->_va;
+}
 
 void	Chunk::generate(void)
 {
-	for (size_t depth = 0; depth < CHUNK_SIZE; depth++)
+	for (size_t z = 0; z < CHUNK_SIZE; z++)
 	{
-		for (size_t row = 0; row < CHUNK_SIZE; row++)
+		for (size_t y = 0; y < CHUNK_SIZE; y++)
 		{
-			for (size_t col = 0; col < CHUNK_SIZE; col++)
+			for (size_t x = 0; x < CHUNK_SIZE; x++)
 			{
-				this->_blocks[depth][row][col] = new Block(
-					GRASS_BLOCK,
-					glm::vec3(this->_worldPos.x + col, this->_worldPos.y + row, this->_worldPos.z + depth),
-					{ GRASS_BLOCK_SIDE, GRASS_BLOCK_SIDE, GRASS_BLOCK_SIDE, GRASS_BLOCK_SIDE, GRASS_BLOCK_TOP, DIRT }
-				);
+				this->_blocks[z][y][x] = GRASS_BLOCK;
 			}
 		}
 	}
 }
 
-void	Chunk::draw(GL_Wrapper::Shader& shader)
+void	Chunk::render(void)
 {
-	size_t block_draw = 0;
-	for (size_t depth = 0; depth < CHUNK_SIZE; depth++)
+	// * CREATE BLOCK VERTICES
+	std::vector<BlockVertex> blocks_vertices;
+	std::vector<unsigned int> vertices_indices;
+	unsigned int block_count = 0;
+
+	TextureId	textures[6] = {
+		GRASS_BLOCK_SIDE,
+		GRASS_BLOCK_SIDE,
+		GRASS_BLOCK_SIDE,
+		GRASS_BLOCK_SIDE,
+		GRASS_BLOCK_TOP,
+		DIRT
+	};
+
+	for (size_t z = 0; z < CHUNK_SIZE; z++)
 	{
-		for (size_t row = 0; row < CHUNK_SIZE; row++)
+		for (size_t y = 0; y < CHUNK_SIZE; y++)
 		{
-			for (size_t col = 0; col < CHUNK_SIZE; col++)
+			for (size_t x = 0; x < CHUNK_SIZE; x++)
 			{
-				if (
-					depth == 0 || depth == CHUNK_SIZE - 1 || row == 0 || row == CHUNK_SIZE - 1 || col == 0 || col == CHUNK_SIZE - 1
-					|| this->_blocks[depth - 1][row][col]->getBlockId() == AIR || this->_blocks[depth + 1][row][col]->getBlockId() == AIR
-					|| this->_blocks[depth][row - 1][col]->getBlockId() == AIR || this->_blocks[depth][row + 1][col]->getBlockId() == AIR
-					|| this->_blocks[depth][row][col - 1]->getBlockId() == AIR || this->_blocks[depth][row][col + 1]->getBlockId() == AIR
-				)
+				// * CHECK IF WE NEED TO RENDER BLOCK
+				if (z == 0 || z == CHUNK_SIZE - 1 || y == 0 || y == CHUNK_SIZE - 1 || x == 0 || x == CHUNK_SIZE - 1
+					|| this->_blocks[z - 1][y][x] == AIR || this->_blocks[z + 1][y][x] == AIR
+					|| this->_blocks[z][y - 1][x] == AIR || this->_blocks[z][y + 1][x] == AIR
+					|| this->_blocks[z][y][x - 1] == AIR || this->_blocks[z][y][x + 1] == AIR)
 				{
-					this->_blocks[depth][row][col]->draw(shader);
-					block_draw++;
+					for (size_t i = 0; i < 24; i++)
+					{
+						BlockVertex vertex = BlockVertex {
+							.vPos = { Block::vertices[i * 5 + 0], Block::vertices[i * 5 + 1], Block::vertices[i * 5 + 2]},
+							.texCoord = { Block::vertices[i * 5 + 3], Block::vertices[i * 5 + 4] },
+							.world_pos = { this->_worldPos.x + x, this->_worldPos.y + y, this->_worldPos.z + z },
+							.TextureId = textures[(i * 5 / 20)]
+						};
+						blocks_vertices.push_back(vertex);
+					}
+					for (size_t i = 0; i < 36; i++)
+					{
+						vertices_indices.push_back(Block::indices[i] + (24 * block_count));
+					}
+					block_count++;
 				}
 			}
 		}
 	}
-	std::cout << "Block drawed: " << block_draw << std::endl;
+	
+	this->_verticesToRender = vertices_indices.size();
+	this->_vb = new GL_Wrapper::VertexBuffer(blocks_vertices.data(), sizeof(BlockVertex) * blocks_vertices.size());
+	this->_eb = new GL_Wrapper::ElementBuffer(vertices_indices.data(), sizeof(unsigned int) * this->_verticesToRender);
+	this->_va = new GL_Wrapper::VertexArray();
+
+	GL_Wrapper::Layout layout_vpos = {GL_FLOAT, 3, GL_FALSE};
+	GL_Wrapper::Layout layout_texture_coord = {GL_FLOAT, 2, GL_FALSE};
+	GL_Wrapper::Layout layout_wpos = {GL_FLOAT, 3, GL_FALSE};
+	GL_Wrapper::Layout layout_texture_id = {GL_UNSIGNED_INT, 1, GL_FALSE};
+	GL_Wrapper::BufferLayout buffer_layout; 
+	buffer_layout.addLayout(layout_vpos);
+	buffer_layout.addLayout(layout_texture_coord);
+	buffer_layout.addLayout(layout_wpos);
+	buffer_layout.addLayout(layout_texture_id);
+
+	this->_va->AddVertexBuffer(*this->_vb, buffer_layout);
+	this->_va->AddElementBuffer(*this->_eb);
+
+	this->_needToRender = false;
+}
+
+void	Chunk::draw(GL_Wrapper::Shader& shader)
+{
+	if (this->_needToRender)
+		this->render();
+	shader.use();
+	this->_va->bind();
+	GLCallThrow(glDrawElements(GL_TRIANGLES, this->_verticesToRender, GL_UNSIGNED_INT, 0));
+	this->_va->unbind();
 }

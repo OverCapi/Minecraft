@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 20:06:07 by capi              #+#    #+#             */
-/*   Updated: 2026/01/17 22:46:10 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/18 14:22:39 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,6 @@ void	Renderer::render(World& world)
 		(int)(cam_pos.z / CHUNK_SIZE)
 	);
 
-	std::cout << "START RENDERING" << std::endl;
 	/*
 		For render distance of 2:
 
@@ -74,5 +73,4 @@ void	Renderer::render(World& world)
 			}
 		}
 	}
-	std::cout << "END RENDERING" << std::endl;
 }

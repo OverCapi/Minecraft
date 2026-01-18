@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 14:47:06 by capi              #+#    #+#             */
-/*   Updated: 2026/01/17 22:30:43 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/18 15:06:40 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,12 +35,19 @@ class Chunk
 		~Chunk(void);
 
 		void	generate(void);
+		void	render(void);
 		void	draw(GL_Wrapper::Shader& shader);
 	private:
-		glm::vec3																		_worldPos;
-		std::array<std::array<std::array<Block *, CHUNK_SIZE>, CHUNK_SIZE>, CHUNK_SIZE>	_blocks;
+		glm::vec3	_worldPos;
 
-		
+		BlockId	_blocks[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
+		size_t	_verticesToRender = 0;
+
+		bool	_needToRender = true;
+
+		GL_Wrapper::VertexBuffer	*_vb = nullptr;
+		GL_Wrapper::ElementBuffer	*_eb = nullptr;
+		GL_Wrapper::VertexArray		*_va = nullptr;
 };
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 14:46:29 by capi              #+#    #+#             */
-/*   Updated: 2026/01/17 22:57:30 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/18 14:21:38 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,16 @@
 World::World(Camera& camera)
 : _camera(camera), _renderDirstance(2) {}
 
-World::~World(void) {}
+World::~World(void)
+{
+	for (auto it = this->_chunkMap.begin(); it != this->_chunkMap.end(); it++)
+	{
+		for (auto chunk = it->second.begin(); chunk != it->second.end(); chunk++)
+		{
+			delete chunk->second;
+		}
+	}
+}
 
 void	World::update(float delta_time)
 {
