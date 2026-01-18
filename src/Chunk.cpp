@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 14:46:27 by capi              #+#    #+#             */
-/*   Updated: 2026/01/18 15:14:11 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/18 16:27:04 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ void	Chunk::render(void)
 	std::vector<unsigned int> vertices_indices;
 	unsigned int block_count = 0;
 
+	//* Texture order : FRONT, BACK, RIGHT, LEFT, TOP, BOTTOM
 	TextureId	textures[6] = {
 		GRASS_BLOCK_SIDE,
 		GRASS_BLOCK_SIDE,
@@ -77,7 +78,51 @@ void	Chunk::render(void)
 					}
 					for (size_t i = 0; i < 36; i++)
 					{
-						vertices_indices.push_back(Block::indices[i] + (24 * block_count));
+						// * CHECK IF WE NEED TO RENDER FACE
+						size_t face_id = i / 6;
+						switch (face_id)
+						{
+							// * FRONT
+							case 0:
+								if (z != CHUNK_SIZE - 1 && this->_blocks[z + 1][y][x] != AIR)
+									i += 5;
+								else
+									vertices_indices.push_back(Block::indices[i] + (24 * block_count));
+								break;
+							// * BACK
+							case 1:
+								if (z != 0 && this->_blocks[z - 1][y][x] != AIR)
+									i += 5;
+								else
+									vertices_indices.push_back(Block::indices[i] + (24 * block_count));
+								break;
+							// * RIGHT
+							case 2:
+								if (x != CHUNK_SIZE - 1 && this->_blocks[z][y][x + 1] != AIR)
+									i += 5;
+								else
+									vertices_indices.push_back(Block::indices[i] + (24 * block_count));
+								break;
+							// * LEFT
+							case 3:
+								if (x != 0 && this->_blocks[z][y][x - 1] != AIR)
+									i += 5;
+								else
+									vertices_indices.push_back(Block::indices[i] + (24 * block_count));
+								break;
+							case 4:
+								if (y != CHUNK_SIZE - 1 && this->_blocks[z][y + 1][x] != AIR)
+									i += 5;
+								else
+									vertices_indices.push_back(Block::indices[i] + (24 * block_count));
+								break;
+							case 5:
+								if (y != 0 && this->_blocks[z][y - 1][x] != AIR)
+									i += 5;
+								else
+									vertices_indices.push_back(Block::indices[i] + (24 * block_count));
+								break;
+						}
 					}
 					block_count++;
 				}

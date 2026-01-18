@@ -87,7 +87,7 @@ void	render_imgui(Camera& camera, float delta_time, float render_time)
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 
-	if (fps_sum > 0xF000000000000000)
+	if (fps_sum > 0xF000000000000000 || nb_call > fps_sum / nb_call)
 	{
 		fps_sum = 0;
 		nb_call = 0;
@@ -113,7 +113,7 @@ void	render_imgui(Camera& camera, float delta_time, float render_time)
 		glm::vec3	cam_up = camera.getUp();
 		ImGui::Text("Up: (%g, %g, %g)", cam_up.x, cam_up.y, cam_up.z);
 
-		ImGui::SliderFloat("Speed", &speed, 0, 10);
+		ImGui::SliderFloat("Speed", &speed, 0, 100);
 	}
 	ImGui::End();
 
@@ -200,12 +200,14 @@ int	main(void)
 		Window window = init();
 
 		GLCallThrow(glEnable(GL_DEPTH_TEST));
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
 
 		glViewport(0, 0, WIDTH*2, HEIGHT*2);
 
 		Renderer renderer;
 
-		Camera camera(glm::vec3(0, 20, 0), 90, 0);
+		Camera camera(glm::vec3(0, 0, 0), 90, 0);
 		World world(camera);
 
 		float delta_time = 0.0f;
@@ -227,7 +229,6 @@ int	main(void)
 			renderer.render(world);
 			float end_render = glfwGetTime();
 
-			// render(camera, shader, texture, chunk);
 	
 			render_imgui(camera, delta_time, end_render - start_render);
 			

@@ -6,14 +6,14 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 14:46:29 by capi              #+#    #+#             */
-/*   Updated: 2026/01/18 14:21:38 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/18 16:28:31 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "World.hpp"
 
 World::World(Camera& camera)
-: _camera(camera), _renderDirstance(2) {}
+: _camera(camera), _renderDirstance(12) {}
 
 World::~World(void)
 {
@@ -34,10 +34,11 @@ void	World::update(float delta_time)
 	glm::vec3& cam_pos = this->_camera.getPos();
 	
 	glm::vec3 chunk_pos = glm::vec3(
-		(int)(cam_pos.x / CHUNK_SIZE),
-		(int)(cam_pos.y / CHUNK_SIZE),
-		(int)(cam_pos.z / CHUNK_SIZE)
+		(int)(cam_pos.x / CHUNK_SIZE) * CHUNK_SIZE,
+		0,
+		(int)(cam_pos.z / CHUNK_SIZE) * CHUNK_SIZE
 	);
+
 	// * RENDER CHUNK (CIRCLE RENDERING)
 	/*
 		For render distance of 2:
@@ -55,7 +56,7 @@ void	World::update(float delta_time)
 			{
 				glm::vec3 render_chunk_pos = glm::vec3(
 					chunk_pos.x - (circle * CHUNK_SIZE) + (x * CHUNK_SIZE),
-					chunk_pos.y,
+					0.0,
 					chunk_pos.z - (circle * CHUNK_SIZE) + (z * CHUNK_SIZE)
 				);
 
@@ -68,7 +69,7 @@ void	World::update(float delta_time)
 				} 
 				else if (this->_chunkMap.at(render_chunk_pos.x).find(render_chunk_pos.z) == this->_chunkMap.at(render_chunk_pos.x).end()) 
 				{
-					this->_chunkMap.at(render_chunk_pos.x).insert(std::pair<int, Chunk*>(render_chunk_pos.z, new Chunk(render_chunk_pos * 16.0f)));
+					this->_chunkMap.at(render_chunk_pos.x).insert(std::pair<int, Chunk*>(render_chunk_pos.z, new Chunk(render_chunk_pos)));
 					this->_chunkMap.at(render_chunk_pos.x).at(render_chunk_pos.z)->generate();
 					new_chunk++;
 				}
@@ -79,6 +80,6 @@ void	World::update(float delta_time)
 			}
 		}	
 		if (new_chunk != 0)
-			std::cout << "new to render: " << new_chunk << std::endl;
+			std::cout << "new to GENERATE: " << new_chunk << std::endl;
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 20:06:07 by capi              #+#    #+#             */
-/*   Updated: 2026/01/18 14:22:39 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/18 16:28:13 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,10 +42,14 @@ void	Renderer::render(World& world)
 	std::map<int, std::map<int, Chunk*> >& chunk_map = world.getChunkMap();
 
 	glm::vec3 chunk_pos = glm::vec3(
-		(int)(cam_pos.x / CHUNK_SIZE),
-		(int)(cam_pos.y / CHUNK_SIZE),
-		(int)(cam_pos.z / CHUNK_SIZE)
+		(int)(cam_pos.x / CHUNK_SIZE) * CHUNK_SIZE,
+		0,
+		(int)(cam_pos.z / CHUNK_SIZE) * CHUNK_SIZE
 	);
+
+
+	
+	// chunk_map.at(0).at(0)->draw(this->_shader);
 
 	/*
 		For render distance of 2:
@@ -62,7 +66,7 @@ void	Renderer::render(World& world)
 			{
 				glm::vec3 render_chunk_pos = glm::vec3(
 					chunk_pos.x - (circle * CHUNK_SIZE) + (x * CHUNK_SIZE),
-					chunk_pos.y,
+					0.0,
 					chunk_pos.z - (circle * CHUNK_SIZE) + (z * CHUNK_SIZE)
 				);
 				chunk_map.at(render_chunk_pos.x).at(render_chunk_pos.z)->draw(this->_shader);
