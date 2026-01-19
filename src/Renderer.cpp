@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 20:06:07 by capi              #+#    #+#             */
-/*   Updated: 2026/01/18 17:35:17 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/19 15:33:35 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,16 @@ void	Renderer::render(World& world)
 					0.0,
 					chunk_pos.z - (circle * CHUNK_SIZE) + (z * CHUNK_SIZE)
 				);
-				chunk_map.at(render_chunk_pos.x).at(render_chunk_pos.z)->draw(this->_shader);
+				glm::vec3 render_chunk_pos_center = glm::vec3(
+					chunk_pos.x - (circle * CHUNK_SIZE) + (x * CHUNK_SIZE) + CHUNK_SIZE / 2,
+					0.0,
+					chunk_pos.z - (circle * CHUNK_SIZE) + (z * CHUNK_SIZE) + CHUNK_SIZE / 2
+				);
+				if (chunk_pos == render_chunk_pos || glm::dot(camera.getDir(), glm::normalize(render_chunk_pos_center - camera.getPos())) > 0.0)
+				{
+					std::cout << "chunk : " << chunk_pos.x - (circle * CHUNK_SIZE) + (x * CHUNK_SIZE) << " " << chunk_pos.z - (circle * CHUNK_SIZE) + (z * CHUNK_SIZE) << std::endl;
+					chunk_map.at(render_chunk_pos.x).at(render_chunk_pos.z)->draw(this->_shader);
+				}
 				if (z != 0 && z != (1 + 2 * circle - 1))
 					x += (circle * 2);
 				else
