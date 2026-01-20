@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 20:06:07 by capi              #+#    #+#             */
-/*   Updated: 2026/01/19 15:33:35 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/20 03:49:08 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,16 +38,11 @@ void	Renderer::render(World& world)
 	this->_texture.use(0);
 
 	glm::vec3& cam_pos = camera.getPos();
+	glm::vec3& cam_dir = camera.getDir();
 	int render_distance = world.getRenderDistance();
 	std::map<int, std::map<int, Chunk*> >& chunk_map = world.getChunkMap();
 
-	glm::vec3 chunk_pos = glm::vec3(
-		(int)(cam_pos.x / CHUNK_SIZE) * CHUNK_SIZE,
-		0,
-		(int)(cam_pos.z / CHUNK_SIZE) * CHUNK_SIZE
-	);
-
-
+	glm::vec3 chunk_pos = Utils::getChunkPos(cam_pos);
 	
 	// chunk_map.at(0).at(0)->draw(this->_shader);
 
@@ -75,11 +70,12 @@ void	Renderer::render(World& world)
 					0.0,
 					chunk_pos.z - (circle * CHUNK_SIZE) + (z * CHUNK_SIZE) + CHUNK_SIZE / 2
 				);
-				if (chunk_pos == render_chunk_pos || glm::dot(camera.getDir(), glm::normalize(render_chunk_pos_center - camera.getPos())) > 0.0)
-				{
-					std::cout << "chunk : " << chunk_pos.x - (circle * CHUNK_SIZE) + (x * CHUNK_SIZE) << " " << chunk_pos.z - (circle * CHUNK_SIZE) + (z * CHUNK_SIZE) << std::endl;
+
+				glm::vec3 cam_center = cam_pos - render_chunk_pos_center;
+				float dist = cam_center.x * cam_center.x + cam_center.z * cam_center.z;
+
+				if (dist <= CHUNK_SIZE * CHUNK_SIZE || glm::dot(cam_dir, cam_center) < 0.0)
 					chunk_map.at(render_chunk_pos.x).at(render_chunk_pos.z)->draw(this->_shader);
-				}
 				if (z != 0 && z != (1 + 2 * circle - 1))
 					x += (circle * 2);
 				else

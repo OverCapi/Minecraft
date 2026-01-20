@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 14:46:27 by capi              #+#    #+#             */
-/*   Updated: 2026/01/18 17:01:11 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/20 04:07:37 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,21 @@ Chunk::~Chunk(void)
 
 void	Chunk::generate(void)
 {
+	// * GENERATE MAP HEIGHT
 	for (size_t z = 0; z < CHUNK_SIZE; z++)
 	{
-		for (size_t y = 0; y < CHUNK_SIZE; y++)
+		for (size_t x = 0; x < CHUNK_SIZE; x++)
 		{
-			for (size_t x = 0; x < CHUNK_SIZE; x++)
+			float h = Noise::perlin_noise_2D(glm::vec2(x + this->_worldPos.x, z + this->_worldPos.z), 5);
+			
+			h = Utils::lerp(60.0f, 70.0f, h);
+
+			for (size_t y = 0; y < CHUNK_HEIGHT; y++)
 			{
-				this->_blocks[z][y][x] = GRASS_BLOCK;
+				if ((float)y < h)
+					this->_blocks[z][y][x] = GRASS_BLOCK;
+				else
+					this->_blocks[z][y][x] = AIR;
 			}
 		}
 	}
@@ -64,7 +72,7 @@ void	Chunk::render(void)
 	// * CREATE BLOCK VERTICES
 	std::vector<BlockVertex> blocks_vertices;
 	std::vector<unsigned int> vertices_indices;
-	unsigned int block_count = 0;
+	size_t block_count = 0;
 
 	//* Texture order : FRONT, BACK, RIGHT, LEFT, TOP, BOTTOM
 	TextureId	textures[6] = {
@@ -78,15 +86,16 @@ void	Chunk::render(void)
 
 	for (size_t z = 0; z < CHUNK_SIZE; z++)
 	{
-		for (size_t y = 0; y < CHUNK_SIZE; y++)
+		for (size_t y = 0; y < CHUNK_HEIGHT; y++)
 		{
 			for (size_t x = 0; x < CHUNK_SIZE; x++)
 			{
 				// * CHECK IF WE NEED TO RENDER BLOCK
-				if (z == 0 || z == CHUNK_SIZE - 1 || y == 0 || y == CHUNK_SIZE - 1 || x == 0 || x == CHUNK_SIZE - 1
+				if (this->_blocks[z][y][x] != AIR &&
+					(z == 0 || z == CHUNK_SIZE - 1 || y == 0 || y == CHUNK_HEIGHT - 1 || x == 0 || x == CHUNK_SIZE - 1
 					|| this->_blocks[z - 1][y][x] == AIR || this->_blocks[z + 1][y][x] == AIR
 					|| this->_blocks[z][y - 1][x] == AIR || this->_blocks[z][y + 1][x] == AIR
-					|| this->_blocks[z][y][x - 1] == AIR || this->_blocks[z][y][x + 1] == AIR)
+					|| this->_blocks[z][y][x - 1] == AIR || this->_blocks[z][y][x + 1] == AIR))
 				{
 					for (size_t i = 0; i < 24; i++)
 					{
@@ -98,6 +107,7 @@ void	Chunk::render(void)
 						};
 						blocks_vertices.push_back(vertex);
 					}
+
 					for (size_t i = 0; i < 36; i++)
 					{
 						// * CHECK IF WE NEED TO RENDER FACE
@@ -113,28 +123,28 @@ void	Chunk::render(void)
 								break;
 							// * BACK
 							case 1:
-								if ((backward &&z == 0 && backward->getBlock(x, y, 15) != AIR) || (z != 0 && this->_blocks[z - 1][y][x] != AIR))
+								if ((backward && z == 0 && backward->getBlock(x, y, CHUNK_SIZE - 1) != AIR) || (z != 0 && this->_blocks[z - 1][y][x] != AIR))
 									i += 5;
 								else
 									vertices_indices.push_back(Block::indices[i] + (24 * block_count));
 								break;
 							// * RIGHT
 							case 2:
-								if ((right &&x == CHUNK_SIZE - 1 && right->getBlock(0, y, z) != AIR) || (x != CHUNK_SIZE - 1 && this->_blocks[z][y][x + 1] != AIR))
+								if ((right && x == CHUNK_SIZE - 1 && right->getBlock(0, y, z) != AIR) || (x != CHUNK_SIZE - 1 && this->_blocks[z][y][x + 1] != AIR))
 									i += 5;
 								else
 									vertices_indices.push_back(Block::indices[i] + (24 * block_count));
 								break;
 							// * LEFT
 							case 3:
-								if ((left &&x == 0 && left->getBlock(15, y, z) != AIR) || (x != 0 && this->_blocks[z][y][x - 1] != AIR))
+								if ((left && x == 0 && left->getBlock(CHUNK_SIZE - 1, y, z) != AIR) || (x != 0 && this->_blocks[z][y][x - 1] != AIR))
 									i += 5;
 								else
 									vertices_indices.push_back(Block::indices[i] + (24 * block_count));
 								break;
 							// * TOP
 							case 4:
-								if (y != CHUNK_SIZE - 1 && this->_blocks[z][y + 1][x] != AIR)
+								if (y != CHUNK_HEIGHT - 1 && this->_blocks[z][y + 1][x] != AIR)
 									i += 5;
 								else
 									vertices_indices.push_back(Block::indices[i] + (24 * block_count));
@@ -153,11 +163,11 @@ void	Chunk::render(void)
 			}
 		}
 	}
-	
 	this->_verticesToRender = vertices_indices.size();
 	this->_vb = new GL_Wrapper::VertexBuffer(blocks_vertices.data(), sizeof(BlockVertex) * blocks_vertices.size());
-	this->_eb = new GL_Wrapper::ElementBuffer(vertices_indices.data(), sizeof(unsigned int) * this->_verticesToRender);
+	this->_eb = new GL_Wrapper::ElementBuffer(vertices_indices.data(), this->_verticesToRender);
 	this->_va = new GL_Wrapper::VertexArray();
+	
 
 	GL_Wrapper::Layout layout_vpos = {GL_FLOAT, 3, GL_FALSE};
 	GL_Wrapper::Layout layout_texture_coord = {GL_FLOAT, 2, GL_FALSE};

@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 14:47:06 by capi              #+#    #+#             */
-/*   Updated: 2026/01/19 14:45:33 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/20 03:47:59 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,12 @@
 # include "GL_Wrapper/ElementBuffer.hpp"
 # include "GL_Wrapper/VertexArray.hpp"
 
+# include "Noise.hpp"
 # include "Block.hpp"
-#include  "World.hpp"
+# include "World.hpp"
 
-# define CHUNK_SIZE 16
+# define CHUNK_SIZE	  16
+# define CHUNK_HEIGHT 256
 
 class World;
 
@@ -47,7 +49,7 @@ class Chunk
 
 		glm::vec3	_worldPos;
 
-		BlockId	_blocks[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
+		BlockId	_blocks[CHUNK_SIZE][CHUNK_HEIGHT][CHUNK_SIZE];
 		size_t	_verticesToRender = 0;
 
 		bool	_needToRender = true;

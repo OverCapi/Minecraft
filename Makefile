@@ -34,6 +34,8 @@ SRCS_CPP		= main.cpp \
 				  GL_Wrapper/Texture2D.cpp \
 				  GL_Wrapper/Texture2DArray.cpp \
 				  Window/Window.cpp \
+				  Utils.cpp \
+				  Noise.cpp \
 				  Camera.cpp \
 				  Block.cpp \
 				  Chunk.cpp \

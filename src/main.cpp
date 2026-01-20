@@ -183,7 +183,7 @@ int	main(void)
 
 		Renderer renderer;
 
-		Camera camera(glm::vec3(0, 0, 0), 90, 0);
+		Camera camera(glm::vec3(0, CHUNK_HEIGHT + 1, 0), 90, 0);
 		World world(camera);
 
 		float delta_time = 0.0f;

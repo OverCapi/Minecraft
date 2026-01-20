@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 14:46:29 by capi              #+#    #+#             */
-/*   Updated: 2026/01/18 17:06:24 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/20 04:05:22 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,7 @@ void	World::update(float delta_time)
 
 	glm::vec3& cam_pos = this->_camera.getPos();
 	
-	glm::vec3 chunk_pos = glm::vec3(
-		(int)(cam_pos.x / CHUNK_SIZE) * CHUNK_SIZE,
-		0,
-		(int)(cam_pos.z / CHUNK_SIZE) * CHUNK_SIZE
-	);
+	glm::vec3 chunk_pos = Utils::getChunkPos(cam_pos);
 
 	// * RENDER CHUNK (CIRCLE RENDERING)
 	/*
