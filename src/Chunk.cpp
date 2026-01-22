@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 14:46:27 by capi              #+#    #+#             */
-/*   Updated: 2026/01/20 04:07:37 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/22 18:29:10 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,18 +25,28 @@ Chunk::~Chunk(void)
 
 void	Chunk::generate(void)
 {
+	if (!this->_needToGenerate)
+		return ;
+	this->_needToGenerate = false;
+	float scale = CHUNK_SIZE * 10.0f;
 	// * GENERATE MAP HEIGHT
 	for (size_t z = 0; z < CHUNK_SIZE; z++)
 	{
 		for (size_t x = 0; x < CHUNK_SIZE; x++)
 		{
-			float h = Noise::perlin_noise_2D(glm::vec2(x + this->_worldPos.x, z + this->_worldPos.z), 5);
-			
-			h = Utils::lerp(60.0f, 70.0f, h);
+			float h = Noise::perlin_noise_2D(
+				glm::vec2(((float)x + this->_worldPos.x) / scale, ((float)z + this->_worldPos.z) / scale),
+				6,
+				0.9f,
+				0.01	
+			);
+			h = (h + 1.0f) / 2.0f;
+
+			h = Utils::lerp(60.0f, CHUNK_HEIGHT, h);
 
 			for (size_t y = 0; y < CHUNK_HEIGHT; y++)
 			{
-				if ((float)y < h)
+				if ((float)y < roundf(h))
 					this->_blocks[z][y][x] = GRASS_BLOCK;
 				else
 					this->_blocks[z][y][x] = AIR;

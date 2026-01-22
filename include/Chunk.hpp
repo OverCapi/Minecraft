@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 14:47:06 by capi              #+#    #+#             */
-/*   Updated: 2026/01/20 03:47:59 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/22 14:31:44 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ class Chunk
 		BlockId	_blocks[CHUNK_SIZE][CHUNK_HEIGHT][CHUNK_SIZE];
 		size_t	_verticesToRender = 0;
 
+		bool	_needToGenerate = true;
 		bool	_needToRender = true;
 
 		GL_Wrapper::VertexBuffer	*_vb = nullptr;

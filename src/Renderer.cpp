@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 20:06:07 by capi              #+#    #+#             */
-/*   Updated: 2026/01/20 03:49:08 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/22 15:05:45 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	Renderer::render(World& world)
 	this->_texture.use(0);
 
 	glm::vec3& cam_pos = camera.getPos();
-	glm::vec3& cam_dir = camera.getDir();
+	// glm::vec3& cam_dir = camera.getDir();
 	int render_distance = world.getRenderDistance();
 	std::map<int, std::map<int, Chunk*> >& chunk_map = world.getChunkMap();
 
@@ -54,6 +54,7 @@ void	Renderer::render(World& world)
 		1 2 3
 	*/
 	// TODO Draw only chunks that are in front of the camera.
+	// ! Cam closer to the back chunk than the forward chunk due to chunk pos who is at the corner of the chunk
 	for (size_t circle = 0; circle < (size_t)render_distance; circle++)
 	{
 		for (size_t z = 0; z < 1 + 2 * circle; z++)
@@ -65,17 +66,17 @@ void	Renderer::render(World& world)
 					0.0,
 					chunk_pos.z - (circle * CHUNK_SIZE) + (z * CHUNK_SIZE)
 				);
-				glm::vec3 render_chunk_pos_center = glm::vec3(
-					chunk_pos.x - (circle * CHUNK_SIZE) + (x * CHUNK_SIZE) + CHUNK_SIZE / 2,
-					0.0,
-					chunk_pos.z - (circle * CHUNK_SIZE) + (z * CHUNK_SIZE) + CHUNK_SIZE / 2
-				);
+				// glm::vec3 render_chunk_pos_center = glm::vec3(
+				// 	chunk_pos.x - (circle * CHUNK_SIZE) + (x * CHUNK_SIZE) + CHUNK_SIZE / 2,
+				// 	0.0,
+				// 	chunk_pos.z - (circle * CHUNK_SIZE) + (z * CHUNK_SIZE) + CHUNK_SIZE / 2
+				// );
 
-				glm::vec3 cam_center = cam_pos - render_chunk_pos_center;
-				float dist = cam_center.x * cam_center.x + cam_center.z * cam_center.z;
+				// glm::vec3 cam_center = cam_pos - render_chunk_pos_center;
+				// float dist = cam_center.x * cam_center.x + cam_center.z * cam_center.z;
 
-				if (dist <= CHUNK_SIZE * CHUNK_SIZE || glm::dot(cam_dir, cam_center) < 0.0)
-					chunk_map.at(render_chunk_pos.x).at(render_chunk_pos.z)->draw(this->_shader);
+				// if (dist <= CHUNK_SIZE * CHUNK_SIZE || glm::dot(cam_dir, cam_center) < 0.0)
+				chunk_map.at(render_chunk_pos.z).at(render_chunk_pos.x)->draw(this->_shader);
 				if (z != 0 && z != (1 + 2 * circle - 1))
 					x += (circle * 2);
 				else

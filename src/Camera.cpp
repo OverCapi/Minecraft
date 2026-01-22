@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 22:22:02 by capi              #+#    #+#             */
-/*   Updated: 2026/01/20 01:42:48 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/21 22:28:27 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,5 +85,5 @@ void	Camera::update_vector(void)
 	this->_up = glm::normalize(glm::cross(this->_dir, this->_right));
 
 	this->_view = glm::lookAt(this->_pos, this->_pos + this->_dir, this->_up);
-	this->_projection = glm::perspective(glm::radians(45.0f), 1920.0f / 1080.0f, 0.1f, 192.0f);	
+	this->_projection = glm::perspective(glm::radians(45.0f), 1920.0f / 1080.0f, 0.1f, 10000.0f);	
 }

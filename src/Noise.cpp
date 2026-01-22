@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/18 23:13:19 by capi              #+#    #+#             */
-/*   Updated: 2026/01/20 04:07:00 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/22 01:35:42 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,11 @@ float	Noise::perlin_noise_2D(
 	size_t octave, float lacunarity, float persistence
 )
 {
-	p /= 16;
-
-	
 	float result = 0;
 
 	float frequency = 1.0f;
 	float amplitude = 1.0f;
+	float sum_amplitude = 0.0f;
 	for (size_t i = 0; i < octave; i++)
 	{
 		p *= frequency;
@@ -37,22 +35,21 @@ float	Noise::perlin_noise_2D(
 		// * get weight for x and y
 		glm::vec2 weight = glm::vec2(p.x - grid_x0, p.y - grid_y0);
 
-		glm::vec2 gradient = Noise::getRandomGradient(grid_x0, grid_y0);
-
-		float dot_n0 = glm::dot(gradient, p - glm::vec2(grid_x0, grid_y0));
-		float dot_n1 = glm::dot(gradient, p - glm::vec2(grid_x1, grid_y0));
+		float dot_n0 = glm::dot(Noise::getRandomGradient(grid_x0, grid_y0), p - glm::vec2(grid_x0, grid_y0));
+		float dot_n1 = glm::dot(Noise::getRandomGradient(grid_x1, grid_y0), p - glm::vec2(grid_x1, grid_y0));
 		float a = Noise::cubic_interpolate(dot_n0, dot_n1, weight.x);
 
-		dot_n0 = glm::dot(gradient, p - glm::vec2(grid_x0, grid_y1));
-		dot_n1 = glm::dot(gradient, p - glm::vec2(grid_x1, grid_y1));
+		dot_n0 = glm::dot(Noise::getRandomGradient(grid_x0, grid_y1), p - glm::vec2(grid_x0, grid_y1));
+		dot_n1 = glm::dot(Noise::getRandomGradient(grid_x1, grid_y1), p - glm::vec2(grid_x1, grid_y1));
 		float b = Noise::cubic_interpolate(dot_n0, dot_n1, weight.x);
 
 		result += Noise::cubic_interpolate(a, b, weight.y) * amplitude;
 
+		sum_amplitude += amplitude;
 		frequency *= lacunarity;
 		amplitude *= persistence;
 	}
-	return (result);
+	return (result / sum_amplitude);
 }
 
 float	Noise::cubic_interpolate(float a, float b, float t)
@@ -60,7 +57,7 @@ float	Noise::cubic_interpolate(float a, float b, float t)
 	return ((b - a) * (3.0 - t * 2.0) * t * t + a);
 }
 
-// TODO PRENDRE EN COMPTE LA SEED
+// ! Bug when a value is less than 0, probably due to sign bit.
 glm::vec2	Noise::getRandomGradient(int grid_x, int grid_y)
 {
 	// * No precomputed gradients mean this works for any number of grid coordinates

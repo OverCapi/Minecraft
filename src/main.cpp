@@ -21,6 +21,7 @@
 #define HEIGHT 1080
 
 float g_ImGui_speed = 15.0f;
+int g_render_distance = 12;
 
 using namespace GL_Wrapper;
 
@@ -89,7 +90,7 @@ void	render_imgui(Camera& camera, float delta_time, float render_time)
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 
-	if (fps_sum > 0xF000000000000000 || nb_call > fps_sum / nb_call)
+	if (nb_call > fps_sum / nb_call)
 	{
 		fps_sum = 0;
 		nb_call = 0;
@@ -105,6 +106,9 @@ void	render_imgui(Camera& camera, float delta_time, float render_time)
 	{
 		glm::vec3	cam_pos = camera.getPos();
 		ImGui::Text("Position: (%g, %g, %g)", cam_pos.x, cam_pos.y, cam_pos.z);
+
+		glm::vec3 chunk_pos = Utils::getChunkPos(camera.getPos());
+		ImGui::Text("Chunk pos: (%g, %g, %g)", chunk_pos.x, chunk_pos.y, chunk_pos.z);
 	
 		glm::vec3	cam_dir = camera.getDir();
 		ImGui::Text("Direction: (%g, %g, %g)", cam_dir.x, cam_dir.y, cam_dir.z);
@@ -117,6 +121,12 @@ void	render_imgui(Camera& camera, float delta_time, float render_time)
 
 		ImGui::SliderFloat("Speed", &g_ImGui_speed, 0, 100);
 	}
+
+	if (ImGui::CollapsingHeader("World"))
+	{
+		ImGui::SliderInt("Render distance", &g_render_distance, 1, 32);
+	}
+
 	ImGui::End();
 
 	// Usefull to knowing all feature of ImGui
@@ -199,6 +209,7 @@ int	main(void)
 			process_input(delta_time, window.getGLFWWindow(), world.getCamera());
 			update_dir(world.getCamera());
 
+			world.setRenderDistance(g_render_distance);
 			world.update(delta_time);
 
 			float start_render = glfwGetTime();
