@@ -6,64 +6,41 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 14:42:27 by capi              #+#    #+#             */
-/*   Updated: 2026/01/17 22:03:02 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/24 15:07:27 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef BLOCK_HPP
-# define BLOCK_HPP
-
-# define BLOCK_VERTICES 36
+#ifndef BLOCKTYPE_HPP
+# define BLOCKTYPE_HPP
 
 # include <glm/glm.hpp>
+
+# include <array>
 
 # include "GL_Wrapper/Shader.hpp"
 # include "GL_Wrapper/VertexBuffer.hpp"
 # include "GL_Wrapper/ElementBuffer.hpp"
 # include "GL_Wrapper/VertexArray.hpp"
 
-typedef enum BlockId
-{
-	AIR = 0,
-	GRASS_BLOCK,
-}	BlockId;
+// # define GRASS_BLOCK() Block("grass_block", 1, );
 
-typedef enum TextureId
-{
-	DIRT = 0,
-	GRASS_BLOCK_SIDE,
-	GRASS_BLOCK_TOP,
-}	TextureId;
-
-typedef struct BlockVertex
-{
-	float		vPos[3];
-	float		texCoord[2];
-	float		world_pos[3];
-	TextureId	TextureId;
-}	BlockVertex;
-
+// TODO store texturesIds in unordered_map<id, textureArray> in the texture manager
 class Block
-{
+{	
 	public:
-		static const float			vertices[5 * 4 * 6];
-		static const unsigned int	indices[BLOCK_VERTICES];
-
-	public:
-		Block(BlockId	type, const glm::vec3& worldPos, const std::array<TextureId, 6>& face_texture);
+		// This class should only be instantiated directly if the block has no function.
+		// otherwise WIP
+		Block(const std::string& name, unsigned int id, const std::array<unsigned int, 6>& texturesIds);
 		~Block(void);
 
-		BlockId	getBlockId(void) { return (this->_type); };
-
-		void	draw(GL_Wrapper::Shader& shader) const;
+		const std::string&						getName(void) const { return (this->_name); };
+		unsigned int							getId(void) const { return (this->_id); };
+		const std::array<unsigned int, 6>&		getTexturesIds(void) const { return (this->_texturesIds); };
 	private:
-		BlockId						_type;
-		glm::vec3					_worldPos;
-		std::array<TextureId, 6>	_textureIdFace;
-
-		GL_Wrapper::VertexBuffer	*_vb;		
-		GL_Wrapper::ElementBuffer	*_eb;		
-		GL_Wrapper::VertexArray		*_va;	
+		const std::string					_name;
+		const unsigned int					_id;
+		const std::array<unsigned int, 6>	_texturesIds;
 };
+
 
 #endif

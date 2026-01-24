@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 14:47:06 by capi              #+#    #+#             */
-/*   Updated: 2026/01/22 14:31:44 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/24 15:08:29 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,102 @@
 # include "GL_Wrapper/VertexArray.hpp"
 
 # include "Noise.hpp"
-# include "Block.hpp"
+# include "BlockType.hpp"
 # include "World.hpp"
 
 # define CHUNK_SIZE	  16
 # define CHUNK_HEIGHT 256
 
+const float vertices[] = {
+	// POSITION			// TEX COORD
+	// FRONT
+	-0.5, -0.5,  0.5,	0.0, 0.0,	// 0
+	 0.5, -0.5,  0.5,	1.0, 0.0,	// 1
+	-0.5,  0.5,  0.5,	0.0, 1.0,	// 2
+	 0.5,  0.5,  0.5,	1.0, 1.0,	// 3
+
+	// BACK
+	-0.5, -0.5, -0.5,	0.0, 0.0,	// 4
+	 0.5, -0.5, -0.5,	1.0, 0.0,	// 5
+	-0.5,  0.5, -0.5,	0.0, 1.0,	// 6
+	 0.5,  0.5, -0.5,	1.0, 1.0,	// 7
+
+	// RIGHT
+	 0.5, -0.5,  0.5,	0.0, 0.0,	// 8
+	 0.5, -0.5, -0.5,	1.0, 0.0,	// 9
+	 0.5,  0.5,  0.5,	0.0, 1.0,	// 10
+	 0.5,  0.5, -0.5,	1.0, 1.0,	// 11
+
+	// LEFT
+	-0.5, -0.5,  0.5,	0.0, 0.0,	// 12
+	-0.5, -0.5, -0.5,	1.0, 0.0,	// 13
+	-0.5,  0.5,  0.5,	0.0, 1.0,	// 14
+	-0.5,  0.5, -0.5,	1.0, 1.0,	// 15
+
+	// TOP
+	-0.5,  0.5,  0.5,	0.0, 0.0,	// 16
+	 0.5,  0.5,  0.5,	1.0, 0.0,	// 17
+	-0.5,  0.5, -0.5,	0.0, 1.0,	// 18
+	 0.5,  0.5, -0.5,	1.0, 1.0,	// 19
+
+	// BOTTOM
+	-0.5, -0.5,  0.5,	0.0, 0.0,	// 20
+	 0.5, -0.5,  0.5,	1.0, 0.0,	// 21
+	-0.5, -0.5, -0.5,	0.0, 1.0,	// 22
+	 0.5, -0.5, -0.5,	1.0, 1.0,	// 23
+};
+
+# define BLOCK_VERTICES 36
+const unsigned int	indices[] = {
+	// FRONT
+	0, 3, 2,
+	0, 1, 3,
+
+	// BACK
+	6, 7, 4,
+	7, 5, 4,
+
+	// RIGHT
+	8, 11, 10,
+	8,  9, 11,  
+
+	// LEFT
+	14, 15, 12,
+	15, 13, 12,
+
+	// TOP
+	16, 19, 18,
+	16, 17, 19,
+	
+	// BOTTOM
+	22, 23, 20,
+	23, 21, 20
+};
+
 class World;
+
+// typedef enum BlockId
+// {
+// 	AIR = 0,
+// 	GRASS_BLOCK,
+// }	BlockId;
+
+typedef unsigned int BlockId;
+
+typedef enum TextureId
+{
+	DIRT = 0,
+	GRASS_BLOCK_SIDE,
+	GRASS_BLOCK_TOP,
+}	TextureId;
+
+typedef struct BlockVertex
+{
+	float		vPos[3];
+	float		texCoord[2];
+	float		world_pos[3];
+	TextureId	TextureId;
+}	BlockVertex;
 
 class Chunk
 {
