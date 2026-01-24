@@ -1,19 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Block.cpp                                          :+:      :+:    :+:   */
+/*   BlockType.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 14:41:57 by capi              #+#    #+#             */
-/*   Updated: 2026/01/24 14:54:00 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/24 22:28:10 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Block.hpp"
+#include "Blocks/BlockType.hpp"
 
-Block::Block(const std::string& name, unsigned int id, const std::array<unsigned int, 6>& texturesIds)
-: _name(name), _id(id), _texturesIds(texturesIds)
-{}
+BlockType::BlockType(const std::string& name, unsigned int blockId)
+: _name(name), _blockId(blockId) {}
 
-Block::~Block(void) {}
+BlockType::~BlockType(void) {}

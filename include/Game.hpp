@@ -1,36 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Renderer.hpp                                       :+:      :+:    :+:   */
+/*   Game.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/01/17 20:02:45 by capi              #+#    #+#             */
-/*   Updated: 2026/01/24 22:40:22 by capi             ###   ########.fr       */
+/*   Created: 2026/01/24 21:56:10 by capi              #+#    #+#             */
+/*   Updated: 2026/01/24 22:52:07 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef RENDERER_HPP
-# define RENDERER_HPP
+#ifndef GAME_HPP
+# define GAME_HPP
 
-# include "GL_Wrapper/Shader.hpp"
-# include "GL_Wrapper/Texture2DArray.hpp"
+# include <ctype.h>
 
-# include "Utils.hpp"
+# include "TextureManager.hpp"
+# include "Blocks/BlockManager.hpp"
+
 # include "World.hpp"
 
-class Renderer
+class Game
 {
 	public:
-		Renderer(void);
-		~Renderer(void);
+		Game(size_t seed);
+		~Game(void);
 
-		void	render(World& world);
-	private:
-		void	send_info_gpu(Camera& camera);
+		void	init(void);
+		void	update(float deltaTime);
 
+		World&	getWorld(void) { return (this->_world); };
 	private:
-		GL_Wrapper::Shader			_shader;
+		size_t	_seed;
+
+		World	_world;
 };
 
 #endif

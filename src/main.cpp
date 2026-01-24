@@ -10,9 +10,8 @@
 #include "GL_Wrapper/GL_Wrapper.hpp"
 
 #include "Window.hpp"
-#include "Camera.hpp"
 #include "Renderer.hpp"
-#include "World.hpp"
+#include "Game.hpp"
 
 # define GLFW_INCLUDE_NONE
 # include <GLFW/glfw3.h>
@@ -193,8 +192,8 @@ int	main(void)
 
 		Renderer renderer;
 
-		Camera camera(glm::vec3(0, CHUNK_HEIGHT + 1, 0), 90, 0);
-		World world(camera);
+		Game game(0);
+		game.init();
 
 		float delta_time = 0.0f;
 		float last_frame = 0.0f;
@@ -206,18 +205,18 @@ int	main(void)
 			delta_time = current_frame - last_frame;
 			last_frame = current_frame;
 
-			process_input(delta_time, window.getGLFWWindow(), world.getCamera());
-			update_dir(world.getCamera());
+			process_input(delta_time, window.getGLFWWindow(), game.getWorld().getCamera());
+			update_dir(game.getWorld().getCamera());
 
-			world.setRenderDistance(g_render_distance);
-			world.update(delta_time);
+			game.getWorld().setRenderDistance(g_render_distance);
+			game.update(delta_time);
 
 			float start_render = glfwGetTime();
-			renderer.render(world);
+			renderer.render(game.getWorld());
 			float end_render = glfwGetTime();
 
 	
-			render_imgui(camera, delta_time, end_render - start_render);
+			render_imgui(game.getWorld().getCamera(), delta_time, end_render - start_render);
 			
 			glfwSwapBuffers(window.getGLFWWindow());
 		}

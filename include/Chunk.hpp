@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 14:47:06 by capi              #+#    #+#             */
-/*   Updated: 2026/01/24 15:08:29 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/24 22:25:37 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,13 @@
 # include "GL_Wrapper/VertexArray.hpp"
 
 # include "Noise.hpp"
-# include "BlockType.hpp"
+# include "Blocks/BlockType.hpp"
+# include "TextureManager.hpp"
 # include "World.hpp"
 
 # define CHUNK_SIZE	  16
 # define CHUNK_HEIGHT 256
+# define BLOCK_VERTICES 36
 
 const float vertices[] = {
 	// POSITION			// TEX COORD
@@ -70,7 +72,6 @@ const float vertices[] = {
 	 0.5, -0.5, -0.5,	1.0, 1.0,	// 23
 };
 
-# define BLOCK_VERTICES 36
 const unsigned int	indices[] = {
 	// FRONT
 	0, 3, 2,
@@ -98,21 +99,6 @@ const unsigned int	indices[] = {
 };
 
 class World;
-
-// typedef enum BlockId
-// {
-// 	AIR = 0,
-// 	GRASS_BLOCK,
-// }	BlockId;
-
-typedef unsigned int BlockId;
-
-typedef enum TextureId
-{
-	DIRT = 0,
-	GRASS_BLOCK_SIDE,
-	GRASS_BLOCK_TOP,
-}	TextureId;
 
 typedef struct BlockVertex
 {

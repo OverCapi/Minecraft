@@ -6,22 +6,17 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 20:06:07 by capi              #+#    #+#             */
-/*   Updated: 2026/01/22 15:05:45 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/24 22:52:07 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Renderer.hpp"
 
 Renderer::Renderer(void)
-:	_shader(GL_Wrapper::Shader("src/shader/vertex_shader.glsl", "src/shader/fragment_shader.glsl")),
-	_texture(GL_Wrapper::Texture2DArray(16, 16, 3, GL_RGBA))
+:	_shader(GL_Wrapper::Shader("src/shader/vertex_shader.glsl", "src/shader/fragment_shader.glsl"))
 {
 	this->_shader.use();
 	this->_shader.setInt("blockTexture", 0);
-
-	this->_texture.addTexture("assets/texture/block/dirt.png", GL_RGBA, true);
-	this->_texture.addTexture("assets/texture/block/grass_side.png", GL_RGBA, true);
-	this->_texture.addTexture("assets/texture/block/grass_top.png", GL_RGBA, true);
 }
 
 Renderer::~Renderer(void) {}
@@ -35,7 +30,7 @@ void	Renderer::render(World& world)
 	glClearColor(0.45f, 0.55f, 0.60f, 1.00f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-	this->_texture.use(0);
+	TextureManager::textures->use(0);
 
 	glm::vec3& cam_pos = camera.getPos();
 	// glm::vec3& cam_dir = camera.getDir();

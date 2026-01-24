@@ -6,14 +6,14 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 14:46:29 by capi              #+#    #+#             */
-/*   Updated: 2026/01/22 18:22:18 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/24 22:38:03 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "World.hpp"
 
-World::World(Camera& camera)
-: _camera(camera), _renderDirstance(2) {}
+World::World(void)
+: _camera(glm::vec3(0, CHUNK_HEIGHT, 0), 0, 0), _renderDirstance(2) {}
 
 World::~World(void)
 {

@@ -6,11 +6,13 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/18 23:13:19 by capi              #+#    #+#             */
-/*   Updated: 2026/01/22 01:35:42 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/24 21:23:26 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Noise.hpp"
+
+#include <iostream>
 
 float	Noise::perlin_noise_2D(
 	glm::vec2 p,
@@ -27,10 +29,10 @@ float	Noise::perlin_noise_2D(
 		p *= frequency;
 
 		// * get the coordonate of the grid
-		int grid_x0 = p.x;
-		int grid_y0 = p.y;
-		int grid_x1 = p.x + 1;
-		int grid_y1 = p.y + 1;
+		int grid_x0 = floorf(p.x);
+		int grid_y0 = floorf(p.y);
+		int grid_x1 = floorf(p.x + 1);
+		int grid_y1 = floorf(p.y + 1);
 
 		// * get weight for x and y
 		glm::vec2 weight = glm::vec2(p.x - grid_x0, p.y - grid_y0);
@@ -82,3 +84,12 @@ glm::vec2	Noise::getRandomGradient(int grid_x, int grid_y)
 
 	return (v);
 }
+
+// NoiseGenerator::NoiseGenerator(size_t seed)
+// {
+// 	for (size_t i = 0; i < this->_permTable.size(); i++)
+// 	{
+// 		this->_permTable[i] = i;
+// 	}
+// 	std::shuffle(this->_permTable.begin(), this->_permTable.end(), seed);
+// }

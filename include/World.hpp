@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 14:46:40 by capi              #+#    #+#             */
-/*   Updated: 2026/01/22 14:37:34 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/24 22:19:31 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,19 +27,20 @@ class Chunk;
 class World
 {
 	public:
-		World(Camera& camera);
+		World(void);
 		~World(void);
 
 		Camera&	getCamera(void) { return (this->_camera); };
 
-		int	getRenderDistance(void) { return (this->_renderDirstance); };
+		int		getRenderDistance(void) { return (this->_renderDirstance); };
+		void	setRenderDistance(int renderDistance) { if (renderDistance > 0) { this->_renderDirstance = renderDistance;} };
+		
 		std::map<int, std::map<int, Chunk*> >&	getChunkMap(void) { return (this->_chunkMap); };
 		
 		void	update(float delta_time);
 
-		void	setRenderDistance(int renderDistance) { if (renderDistance > 0) { this->_renderDirstance = renderDistance;} };
 	private:
-		Camera&	_camera;
+		Camera	_camera;
 
 		int	_renderDirstance;
 		std::map<int, std::map<int, Chunk*> > _chunkMap;

@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 22:22:19 by capi              #+#    #+#             */
-/*   Updated: 2026/01/18 17:31:37 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/24 22:17:33 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@ extern float g_ImGui_speed;
 class Camera
 {
 	public:
-		Camera(void) {};
 		Camera(glm::vec3 pos, float yaw, float pitch);
+		Camera(void) {};
 		~Camera(void);
 
 		void		process_input(GLFWwindow *window, float delta_time);

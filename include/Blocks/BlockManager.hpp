@@ -1,36 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Renderer.hpp                                       :+:      :+:    :+:   */
+/*   BlockManager.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/01/17 20:02:45 by capi              #+#    #+#             */
-/*   Updated: 2026/01/24 22:40:22 by capi             ###   ########.fr       */
+/*   Created: 2026/01/24 21:49:41 by capi              #+#    #+#             */
+/*   Updated: 2026/01/24 21:52:41 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef RENDERER_HPP
-# define RENDERER_HPP
+#ifndef BLOCKMANAGER_HPP
+# define BLOCKMANAGER_HPP
 
-# include "GL_Wrapper/Shader.hpp"
-# include "GL_Wrapper/Texture2DArray.hpp"
+# include <unordered_map>
 
-# include "Utils.hpp"
-# include "World.hpp"
+# include "BlockType.hpp"
 
-class Renderer
+class BlockManager
 {
 	public:
-		Renderer(void);
-		~Renderer(void);
+		static unsigned int instanciateBlock(const char* blockName);
 
-		void	render(World& world);
-	private:
-		void	send_info_gpu(Camera& camera);
-
-	private:
-		GL_Wrapper::Shader			_shader;
+		static unsigned int									blockId;
+		static std::unordered_map<unsigned int, BlockType>	blockTypeMap;
 };
 
 #endif

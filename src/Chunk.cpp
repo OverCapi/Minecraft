@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 14:46:27 by capi              #+#    #+#             */
-/*   Updated: 2026/01/23 19:51:13 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/24 22:37:35 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,16 +84,6 @@ void	Chunk::render(void)
 	std::vector<unsigned int> vertices_indices;
 	size_t block_count = 0;
 
-	//* Texture order : FRONT, BACK, RIGHT, LEFT, TOP, BOTTOM
-	TextureId	textures[6] = {
-		GRASS_BLOCK_SIDE,
-		GRASS_BLOCK_SIDE,
-		GRASS_BLOCK_SIDE,
-		GRASS_BLOCK_SIDE,
-		GRASS_BLOCK_TOP,
-		DIRT
-	};
-
 	for (size_t z = 0; z < CHUNK_SIZE; z++)
 	{
 		for (size_t y = 0; y < CHUNK_HEIGHT; y++)
@@ -107,13 +97,14 @@ void	Chunk::render(void)
 					|| this->_blocks[z][y - 1][x] == AIR || this->_blocks[z][y + 1][x] == AIR
 					|| this->_blocks[z][y][x - 1] == AIR || this->_blocks[z][y][x + 1] == AIR))
 				{
+					std::array<TextureId, 6>& textures = TextureManager::getBlockTextures(this->_blocks[z][y][x]);
 					for (size_t i = 0; i < 24; i++)
 					{
 						BlockVertex vertex = BlockVertex {
 							.vPos = { vertices[i * 5 + 0], vertices[i * 5 + 1], vertices[i * 5 + 2]},
 							.texCoord = { vertices[i * 5 + 3], vertices[i * 5 + 4] },
 							.world_pos = { this->_worldPos.x + x, this->_worldPos.y + y, this->_worldPos.z + z },
-							.TextureId = textures[(i * 5 / 20)]
+							.TextureId = textures.at((i * 5) / 20)
 						};
 						blocks_vertices.push_back(vertex);
 					}

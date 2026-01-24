@@ -37,10 +37,13 @@ SRCS_CPP		= main.cpp \
 				  Utils.cpp \
 				  Noise.cpp \
 				  Camera.cpp \
-				  Block.cpp \
+				  TextureManager.cpp \
+				  Blocks/BlockType.cpp \
+				  Blocks/BlockManager.cpp \
 				  Chunk.cpp \
 				  World.cpp \
-				  Renderer.cpp
+				  Renderer.cpp \
+				  Game.cpp
 
 IMGUI_DIR		= ./extern/imgui/
 IMGUI_SRCS		= imgui.cpp \
@@ -97,6 +100,7 @@ ${OBJS_DIR}:
 	@mkdir -p ./objs/extern/glad
 	@mkdir -p ./objs/extern/imgui
 	@mkdir -p ./objs/extern/imgui/backends
+	@mkdir -p ./objs/Blocks
 
 clean:
 	@rm -rf objs
