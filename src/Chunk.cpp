@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 14:46:27 by capi              #+#    #+#             */
-/*   Updated: 2026/01/24 22:37:35 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/26 23:36:12 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,21 +28,18 @@ void	Chunk::generate(void)
 	if (!this->_needToGenerate)
 		return ;
 	this->_needToGenerate = false;
-	float scale = CHUNK_SIZE * 10.0f;
+
+	const float scale = CHUNK_SIZE * 10.0f;
+
 	// * GENERATE MAP HEIGHT
 	for (size_t z = 0; z < CHUNK_SIZE; z++)
 	{
 		for (size_t x = 0; x < CHUNK_SIZE; x++)
 		{
-			float h = Noise::perlin_noise_2D(
-				glm::vec2(((float)x + this->_worldPos.x) / scale, ((float)z + this->_worldPos.z) / scale),
-				6,
-				0.9f,
-				0.01f
-			);
-			h = (h + 1.0f) / 2.0f;
+			float h = Noise::fractalNoise2D((this->_worldPos.x + x) / scale, (this->_worldPos.z + z) / scale, 
+											6, 2.0f, 0.5f);
 
-			h = Utils::lerp(60.0f, CHUNK_HEIGHT, h);
+			h = 100 + h * 40;
 
 			for (size_t y = 0; y < CHUNK_HEIGHT; y++)
 			{

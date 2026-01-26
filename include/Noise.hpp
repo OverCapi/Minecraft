@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/18 23:11:43 by capi              #+#    #+#             */
-/*   Updated: 2026/01/24 18:25:34 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/26 23:22:04 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,35 +18,16 @@
 class Noise
 {
 	public:
-		static float	perlin_noise_2D(glm::vec2 p,
-										size_t octave = 1, float lacunarity = 2.0f, float persistence = 0.5f);
-		static float	perlin_noise_3D(glm::vec3 p, size_t seed,
-										float scale, size_t octave = 1, float lacunarity = 2.0f, float persistence = 0.5f);
-
-		static float	cubic_interpolate(float a, float b, float t);
+		static float	fractalNoise2D(float x, float y, uint8_t octave, float lacunarity, float persistence);
+		static float	noise2D(float x, float y);
 
 	private:
-			static glm::vec2	getRandomGradient(int grid_x, int grid_y);
-};
+		static float	dot_grad(int hash, float x, float y);
 
-# include <array>
-# include <algorithm>
-
-class NoiseGenerator
-{
-	public:
-		NoiseGenerator(size_t seed);
-		~NoiseGenerator(void);
-
+		static float	fade(float t);
+		static float	lerp(float a, float b, float t);
 	private:
-		glm::vec2	getGradient(unsigned int perm_value);
-
-
-		float	fade(float t);
-		float	cubic_interpolate(float a, float b, float t);
-		
-	private:
-		std::array<unsigned int, 512>	_permTable;
+		static const int	_permutationTable[512];
 };
 
 #endif

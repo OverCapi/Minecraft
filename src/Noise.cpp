@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/18 23:13:19 by capi              #+#    #+#             */
-/*   Updated: 2026/01/24 21:23:26 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/26 23:27:17 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,39 +14,45 @@
 
 #include <iostream>
 
-float	Noise::perlin_noise_2D(
-	glm::vec2 p,
-	size_t octave, float lacunarity, float persistence
-)
-{
-	float result = 0;
+const int Noise::_permutationTable[512] = { 
+	151,160,137,91,90,15,
+	131,13,201,95,96,53,194,233,7,225,140,36,103,30,69,142,8,99,37,240,21,10,23,
+	190, 6,148,247,120,234,75,0,26,197,62,94,252,219,203,117,35,11,32,57,177,33,
+	88,237,149,56,87,174,20,125,136,171,168, 68,175,74,165,71,134,139,48,27,166,
+	77,146,158,231,83,111,229,122,60,211,133,230,220,105,92,41,55,46,245,40,244,
+	102,143,54, 65,25,63,161, 1,216,80,73,209,76,132,187,208, 89,18,169,200,196,
+	135,130,116,188,159,86,164,100,109,198,173,186, 3,64,52,217,226,250,124,123,
+	5,202,38,147,118,126,255,82,85,212,207,206,59,227,47,16,58,17,182,189,28,42,
+	223,183,170,213,119,248,152, 2,44,154,163, 70,221,153,101,155,167, 43,172,9,
+	129,22,39,253, 19,98,108,110,79,113,224,232,178,185, 112,104,218,246,97,228,
+	251,34,242,193,238,210,144,12,191,179,162,241, 81,51,145,235,249,14,239,107,
+	49,192,214, 31,181,199,106,157,184, 84,204,176,115,121,50,45,127, 4,150,254,
+	138,236,205,93,222,114,67,29,24,72,243,141,128,195,78,66,215,61,156,180,
 
+	151,160,137,91,90,15,
+	131,13,201,95,96,53,194,233,7,225,140,36,103,30,69,142,8,99,37,240,21,10,23,
+	190, 6,148,247,120,234,75,0,26,197,62,94,252,219,203,117,35,11,32,57,177,33,
+	88,237,149,56,87,174,20,125,136,171,168, 68,175,74,165,71,134,139,48,27,166,
+	77,146,158,231,83,111,229,122,60,211,133,230,220,105,92,41,55,46,245,40,244,
+	102,143,54, 65,25,63,161, 1,216,80,73,209,76,132,187,208, 89,18,169,200,196,
+	135,130,116,188,159,86,164,100,109,198,173,186, 3,64,52,217,226,250,124,123,
+	5,202,38,147,118,126,255,82,85,212,207,206,59,227,47,16,58,17,182,189,28,42,
+	223,183,170,213,119,248,152, 2,44,154,163, 70,221,153,101,155,167, 43,172,9,
+	129,22,39,253, 19,98,108,110,79,113,224,232,178,185, 112,104,218,246,97,228,
+	251,34,242,193,238,210,144,12,191,179,162,241, 81,51,145,235,249,14,239,107,
+	49,192,214, 31,181,199,106,157,184, 84,204,176,115,121,50,45,127, 4,150,254,
+	138,236,205,93,222,114,67,29,24,72,243,141,128,195,78,66,215,61,156,180,
+};
+
+float	Noise::fractalNoise2D(float x, float y, uint8_t octave, float lacunarity, float persistence)
+{
+	float result = 0.0f;
 	float frequency = 1.0f;
 	float amplitude = 1.0f;
 	float sum_amplitude = 0.0f;
-	for (size_t i = 0; i < octave; i++)
+	for (uint8_t i = 0; i < octave; i++)
 	{
-		p *= frequency;
-
-		// * get the coordonate of the grid
-		int grid_x0 = floorf(p.x);
-		int grid_y0 = floorf(p.y);
-		int grid_x1 = floorf(p.x + 1);
-		int grid_y1 = floorf(p.y + 1);
-
-		// * get weight for x and y
-		glm::vec2 weight = glm::vec2(p.x - grid_x0, p.y - grid_y0);
-
-		float dot_n0 = glm::dot(Noise::getRandomGradient(grid_x0, grid_y0), p - glm::vec2(grid_x0, grid_y0));
-		float dot_n1 = glm::dot(Noise::getRandomGradient(grid_x1, grid_y0), p - glm::vec2(grid_x1, grid_y0));
-		float a = Noise::cubic_interpolate(dot_n0, dot_n1, weight.x);
-
-		dot_n0 = glm::dot(Noise::getRandomGradient(grid_x0, grid_y1), p - glm::vec2(grid_x0, grid_y1));
-		dot_n1 = glm::dot(Noise::getRandomGradient(grid_x1, grid_y1), p - glm::vec2(grid_x1, grid_y1));
-		float b = Noise::cubic_interpolate(dot_n0, dot_n1, weight.x);
-
-		result += Noise::cubic_interpolate(a, b, weight.y) * amplitude;
-
+		result += noise2D(x * frequency, y * frequency) * amplitude;
 		sum_amplitude += amplitude;
 		frequency *= lacunarity;
 		amplitude *= persistence;
@@ -54,42 +60,57 @@ float	Noise::perlin_noise_2D(
 	return (result / sum_amplitude);
 }
 
-float	Noise::cubic_interpolate(float a, float b, float t)
+float	Noise::noise2D(float x, float y)
 {
-	return ((b - a) * (3.0 - t * 2.0) * t * t + a);
+    const int floor_x = (int)floorf(x);
+    const int floor_y = (int)floorf(y);
+    
+    const int ix = (floor_x % 256 + 256) % 256;
+    const int iy = (floor_y % 256 + 256) % 256;
+
+    const float xf0 = x - floor_x;
+    const float xf1 = xf0 - 1;
+    const float yf0 = y - floor_y;
+    const float yf1 = yf0 - 1;
+
+	const float u = fade(xf0);
+	const float v = fade(yf0);
+
+	const int h00 = _permutationTable[_permutationTable[ix + 0] + iy + 0];
+	const int h01 = _permutationTable[_permutationTable[ix + 0] + iy + 1];
+	const int h10 = _permutationTable[_permutationTable[ix + 1] + iy + 0];
+	const int h11 = _permutationTable[_permutationTable[ix + 1] + iy + 1];
+
+	const float x1 = lerp(dot_grad(h00, xf0, yf0), dot_grad(h10, xf1, yf0), u);
+	const float x2 = lerp(dot_grad(h01, xf0, yf1), dot_grad(h11, xf1, yf1), u);
+	float noise = lerp(x1, x2, v);
+	
+	noise = noise > 1.0f ? 1.0f : noise;
+	noise = noise < -1.0f ? -1.0f : noise;
+	return (noise);
 }
 
-// ! Bug when a value is less than 0, probably due to sign bit.
-glm::vec2	Noise::getRandomGradient(int grid_x, int grid_y)
+float	Noise::dot_grad(int hash, float x, float y)
 {
-	// * No precomputed gradients mean this works for any number of grid coordinates
-	const unsigned w = 8 * sizeof(unsigned);
-	const unsigned s = w / 2; 
-	
-	unsigned a = grid_x;
-	unsigned b = grid_y;
-	a *= 3284157443;
-
-	b ^= a << s | a >> (w - s);
-	b *= 1911520717;
-
-	a ^= b << s | b >> (w - s);
-	a *= 2048419325;
-	float random = a * (3.14159265 / ~(~0u >> 1)); // in [0, 2*Pi]
-	
-	// * Create the vector from the angle
-	glm::vec2 v;
-	v.x = sin(random);
-	v.y = cos(random);
-
-	return (v);
+	switch (hash & 0x7) {
+		case 0x0: return  x + y;
+		case 0x1: return  x;
+		case 0x2: return  x - y;
+		case 0x3: return -y;
+		case 0x4: return -x - y;
+		case 0x5: return -x;
+		case 0x6: return -x + y;
+		case 0x7: return  y;
+		default:  return  0.0f;
+	}
 }
 
-// NoiseGenerator::NoiseGenerator(size_t seed)
-// {
-// 	for (size_t i = 0; i < this->_permTable.size(); i++)
-// 	{
-// 		this->_permTable[i] = i;
-// 	}
-// 	std::shuffle(this->_permTable.begin(), this->_permTable.end(), seed);
-// }
+float	Noise::fade(float t)
+{
+	return (t * t * t * (t * (t * 6 - 15) + 10));
+}
+
+float	Noise::lerp(float a, float b, float t)
+{
+	return (a + t * (b - a));
+}
