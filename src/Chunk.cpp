@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 14:46:27 by capi              #+#    #+#             */
-/*   Updated: 2026/01/26 23:36:12 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/27 02:35:52 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,19 +31,25 @@ void	Chunk::generate(void)
 
 	const float scale = CHUNK_SIZE * 10.0f;
 
+	const TerrainGenerator& generator = this->_associateWorld->getTerrainGenerator();
+
 	// * GENERATE MAP HEIGHT
 	for (size_t z = 0; z < CHUNK_SIZE; z++)
 	{
 		for (size_t x = 0; x < CHUNK_SIZE; x++)
 		{
-			float h = Noise::fractalNoise2D((this->_worldPos.x + x) / scale, (this->_worldPos.z + z) / scale, 
-											6, 2.0f, 0.5f);
+			const float wx = this->_worldPos.x + x;
+			const float wz = this->_worldPos.z + z;
+			float base_height = generator.getTerrainHeight(wx, wz);
 
-			h = 100 + h * 40;
+			float variation_scale = generator.getTerrainHeightVariation(wx, wz);
+			float variation = Noise::fractalNoise2D(wx / scale, wz / scale, 4, 2.0f, 0.5f);
+
+			float h = base_height + variation * variation_scale;
 
 			for (size_t y = 0; y < CHUNK_HEIGHT; y++)
 			{
-				if ((float)y < roundf(h))
+				if ((float)y < h)
 					this->_blocks[z][y][x] = GRASS_BLOCK;
 				else
 					this->_blocks[z][y][x] = AIR;

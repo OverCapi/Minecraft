@@ -43,6 +43,7 @@ SRCS_CPP		= main.cpp \
 				  Chunk.cpp \
 				  World.cpp \
 				  Renderer.cpp \
+				  TerrainGenerator.cpp \
 				  Game.cpp
 
 IMGUI_DIR		= ./extern/imgui/

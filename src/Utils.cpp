@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/20 00:40:50 by capi              #+#    #+#             */
-/*   Updated: 2026/01/20 03:32:11 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/27 01:43:14 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,9 @@ glm::vec3	Utils::getChunkPos(const glm::vec3& pos)
 	return (chunk_pos);
 }
 
-float	Utils::lerp(float a, float b, float t)
+float	Utils::cubic_interpolate(float a, float b, float t)
 {
-	return ((1.0 - t) * a + b * t);
+	return ((b - a) * (3.0 - t * 2.0) * t * t + a);
 }
 
 std::ostream& operator<<(std::ostream& os, const glm::vec3& v)

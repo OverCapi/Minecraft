@@ -6,11 +6,12 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/20 14:47:28 by capi              #+#    #+#             */
-/*   Updated: 2026/01/26 23:27:44 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/27 02:17:42 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Noise.hpp"
+#include "TerrainGenerator.hpp"
 #include <iostream>
 #include <glm/glm.hpp>
 
@@ -27,15 +28,18 @@ int main(void)
 	float min = FLT_MAX;
 	float max = FLT_MIN;
 
+	TerrainGenerator gen;
+
+	const float scale = 16.0f * 10.0f;
 	for (size_t z = 0; z < HEIGHT; z++)
 	{
 		for (size_t x = 0; x < WIDTH; x++)
 		{
 			float fx = (float)x - (float)WIDTH / 2.0f;
 			float fz = (float)z - (float)HEIGHT / 2.0f;
-			float v = Noise::fractalNoise2D(fx / 16, fz / 16, 4, 2.0f, 0.5f);
+			float v = gen.getTerrainHeight(x / scale, z / scale);
 			
-			v = (v + 1) / 2;
+			v /= 150;
 			
 			data[z * WIDTH + x] = (unsigned char)(v * 255);
 		}

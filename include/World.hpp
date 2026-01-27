@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 14:46:40 by capi              #+#    #+#             */
-/*   Updated: 2026/01/24 22:19:31 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/27 02:01:21 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@
 # include "Utils.hpp"
 # include "Camera.hpp"
 # include "Chunk.hpp"
+
+# include "TerrainGenerator.hpp"
 
 class Chunk;
 
@@ -39,11 +41,15 @@ class World
 		
 		void	update(float delta_time);
 
+		const TerrainGenerator&	getTerrainGenerator(void) const { return (this->_terrainGenerator); };
+
 	private:
 		Camera	_camera;
 
 		int	_renderDirstance;
 		std::map<int, std::map<int, Chunk*> > _chunkMap;
+
+		TerrainGenerator	_terrainGenerator;		
 };
 
 #endif
