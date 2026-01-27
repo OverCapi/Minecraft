@@ -1,3 +1,5 @@
 *.o
 ft_minecraft
 imgui.ini
+a.out
+a.out*
