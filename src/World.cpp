@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 14:46:29 by capi              #+#    #+#             */
-/*   Updated: 2026/01/27 02:01:01 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/29 01:37:04 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,8 @@ void	World::update(float delta_time)
 		4 0 5
 		1 2 3
 	*/
+	float start = glfwGetTime();
+	size_t chunk = 0;
 	for (size_t circle = 0; circle <= (size_t)this->_renderDirstance; circle++)
 	{
 		for (size_t z = 0; z < 1 + 2 * circle; z++)
@@ -59,11 +61,13 @@ void	World::update(float delta_time)
 					this->_chunkMap.insert(std::pair<int, std::map<int, Chunk*> >(generate_chunk_pos.z, std::map<int, Chunk*>()));
 					this->_chunkMap.at(generate_chunk_pos.z).insert(std::pair<int, Chunk*>(generate_chunk_pos.x, new Chunk(this, generate_chunk_pos)));
 					this->_chunkMap.at(generate_chunk_pos.z).at(generate_chunk_pos.x)->generate();
+					chunk++;
 				}
 				else if (this->_chunkMap.at(generate_chunk_pos.z).find(generate_chunk_pos.x) == this->_chunkMap.at(generate_chunk_pos.z).end()) 
 				{
 					this->_chunkMap.at(generate_chunk_pos.z).insert(std::pair<int, Chunk*>(generate_chunk_pos.x, new Chunk(this, generate_chunk_pos)));
 					this->_chunkMap.at(generate_chunk_pos.z).at(generate_chunk_pos.x)->generate();
+					chunk++;
 				}
 				if (z != 0 && z != (1 + 2 * circle - 1))
 					x += (circle * 2);
@@ -72,4 +76,6 @@ void	World::update(float delta_time)
 			}
 		}
 	}
+	if (chunk > 0)
+		std::cout << chunk << " generate in " << glfwGetTime() - start << " s" << std::endl;
 }

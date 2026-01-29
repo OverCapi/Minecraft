@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/27 00:14:35 by capi              #+#    #+#             */
-/*   Updated: 2026/01/27 02:27:52 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/28 17:53:25 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,12 +33,21 @@ class TerrainGenerator
 		TerrainGenerator(void);
 		~TerrainGenerator(void);
 
+		float	getTerrainShape(float x, float y) const;
 		float	getTerrainHeight(float x, float z) const;
 		float	getTerrainHeightVariation(float x, float z) const;
+
+	private:
+		uint8_t	getMaxOctave(void) const;	
+		
 	private:
 		Spline	_baseHeightSpline;	
 		Spline	_variationHeightSpline;
-		
+
+		NoiseParam	_continentalness;
+		NoiseParam	_heightVariationScale;
+		NoiseParam	_heightVariation;
+		uint8_t		_maxOctave;
 };
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 20:06:07 by capi              #+#    #+#             */
-/*   Updated: 2026/01/24 22:52:07 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/27 15:58:10 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,16 +61,6 @@ void	Renderer::render(World& world)
 					0.0,
 					chunk_pos.z - (circle * CHUNK_SIZE) + (z * CHUNK_SIZE)
 				);
-				// glm::vec3 render_chunk_pos_center = glm::vec3(
-				// 	chunk_pos.x - (circle * CHUNK_SIZE) + (x * CHUNK_SIZE) + CHUNK_SIZE / 2,
-				// 	0.0,
-				// 	chunk_pos.z - (circle * CHUNK_SIZE) + (z * CHUNK_SIZE) + CHUNK_SIZE / 2
-				// );
-
-				// glm::vec3 cam_center = cam_pos - render_chunk_pos_center;
-				// float dist = cam_center.x * cam_center.x + cam_center.z * cam_center.z;
-
-				// if (dist <= CHUNK_SIZE * CHUNK_SIZE || glm::dot(cam_dir, cam_center) < 0.0)
 				chunk_map.at(render_chunk_pos.z).at(render_chunk_pos.x)->draw(this->_shader);
 				if (z != 0 && z != (1 + 2 * circle - 1))
 					x += (circle * 2);

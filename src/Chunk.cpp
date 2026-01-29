@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 14:46:27 by capi              #+#    #+#             */
-/*   Updated: 2026/01/27 02:35:52 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/29 02:15:32 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,6 @@ void	Chunk::generate(void)
 		return ;
 	this->_needToGenerate = false;
 
-	const float scale = CHUNK_SIZE * 10.0f;
-
 	const TerrainGenerator& generator = this->_associateWorld->getTerrainGenerator();
 
 	// * GENERATE MAP HEIGHT
@@ -40,16 +38,11 @@ void	Chunk::generate(void)
 		{
 			const float wx = this->_worldPos.x + x;
 			const float wz = this->_worldPos.z + z;
-			float base_height = generator.getTerrainHeight(wx, wz);
-
-			float variation_scale = generator.getTerrainHeightVariation(wx, wz);
-			float variation = Noise::fractalNoise2D(wx / scale, wz / scale, 4, 2.0f, 0.5f);
-
-			float h = base_height + variation * variation_scale;
+			const float height = generator.getTerrainShape(wx, wz);
 
 			for (size_t y = 0; y < CHUNK_HEIGHT; y++)
 			{
-				if ((float)y < h)
+				if ((float)y < height)
 					this->_blocks[z][y][x] = GRASS_BLOCK;
 				else
 					this->_blocks[z][y][x] = AIR;
@@ -87,6 +80,8 @@ void	Chunk::render(void)
 	std::vector<unsigned int> vertices_indices;
 	size_t block_count = 0;
 
+	blocks_vertices.reserve(210000);
+	vertices_indices.reserve(5000);
 	for (size_t z = 0; z < CHUNK_SIZE; z++)
 	{
 		for (size_t y = 0; y < CHUNK_HEIGHT; y++)
@@ -103,13 +98,12 @@ void	Chunk::render(void)
 					std::array<TextureId, 6>& textures = TextureManager::getBlockTextures(this->_blocks[z][y][x]);
 					for (size_t i = 0; i < 24; i++)
 					{
-						BlockVertex vertex = BlockVertex {
+						blocks_vertices.emplace_back(BlockVertex {
 							.vPos = { vertices[i * 5 + 0], vertices[i * 5 + 1], vertices[i * 5 + 2]},
 							.texCoord = { vertices[i * 5 + 3], vertices[i * 5 + 4] },
 							.world_pos = { this->_worldPos.x + x, this->_worldPos.y + y, this->_worldPos.z + z },
 							.TextureId = textures.at((i * 5) / 20)
-						};
-						blocks_vertices.push_back(vertex);
+						});
 					}
 
 					for (size_t i = 0; i < 36; i++)

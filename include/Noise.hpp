@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/18 23:11:43 by capi              #+#    #+#             */
-/*   Updated: 2026/01/26 23:22:04 by capi             ###   ########.fr       */
+/*   Updated: 2026/01/28 17:47:18 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,16 @@
 # define NOISE_HPP
 
 # include "glm/glm.hpp"
+
+typedef struct NoiseParam
+{
+	uint8_t	octave;
+	float	lacunarity;
+	float	persistence;
+	float	zoom;
+
+	NoiseParam(uint8_t octave, float lacunarity, float persistence, float zoom): octave(octave), lacunarity(lacunarity), persistence(persistence), zoom(zoom) {};
+}	NoiseParam;
 
 class Noise
 {
