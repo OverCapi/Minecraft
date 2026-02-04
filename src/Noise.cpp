@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/18 23:13:19 by capi              #+#    #+#             */
-/*   Updated: 2026/01/26 23:27:17 by capi             ###   ########.fr       */
+/*   Updated: 2026/02/04 17:35:32 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,22 @@ float	Noise::fractalNoise2D(float x, float y, uint8_t octave, float lacunarity, 
 	return (result / sum_amplitude);
 }
 
+float	Noise::fractalNoise3D(float x, float y, float z, uint8_t octave, float lacunarity, float persistence)
+{
+	float result = 0.0f;
+	float frequency = 1.0f;
+	float amplitude = 1.0f;
+	float sum_amplitude = 0.0f;
+	for (uint8_t i = 0; i < octave; i++)
+	{
+		result += noise3D(x * frequency, y * frequency, z * frequency) * amplitude;
+		sum_amplitude += amplitude;
+		frequency *= lacunarity;
+		amplitude *= persistence;
+	}
+	return (result / sum_amplitude);	
+}
+
 float	Noise::noise2D(float x, float y)
 {
     const int floor_x = (int)floorf(x);
@@ -90,6 +106,51 @@ float	Noise::noise2D(float x, float y)
 	return (noise);
 }
 
+float	Noise::noise3D(float x, float y, float z)
+{
+    const int floor_x = (int)floorf(x);
+    const int floor_y = (int)floorf(y);
+	const int floor_z = (int)floorf(z);
+    
+    const int ix = (floor_x % 256 + 256) % 256;
+    const int iy = (floor_y % 256 + 256) % 256;
+	const int iz = (floor_z % 256 + 256) % 256;
+
+    const float xf0 = x - floor_x;
+    const float xf1 = xf0 - 1;
+    const float yf0 = y - floor_y;
+    const float yf1 = yf0 - 1;
+	const float zf0 = z - floor_z;
+    const float zf1 = zf0 - 1;
+
+	const float u = fade(xf0);
+	const float v = fade(yf0);
+	const float w = fade(zf0);
+
+	const int	h000 = _permutationTable[_permutationTable[_permutationTable[ix + 0] + iy + 0] + iz + 0];
+	const int	h001 = _permutationTable[_permutationTable[_permutationTable[ix + 0] + iy + 0] + iz + 1];
+	const int	h010 = _permutationTable[_permutationTable[_permutationTable[ix + 0] + iy + 1] + iz + 0];
+	const int	h011 = _permutationTable[_permutationTable[_permutationTable[ix + 0] + iy + 1] + iz + 1];
+	const int	h100 = _permutationTable[_permutationTable[_permutationTable[ix + 1] + iy + 0] + iz + 0];
+	const int	h101 = _permutationTable[_permutationTable[_permutationTable[ix + 1] + iy + 0] + iz + 1];
+	const int	h110 = _permutationTable[_permutationTable[_permutationTable[ix + 1] + iy + 1] + iz + 0];
+	const int	h111 = _permutationTable[_permutationTable[_permutationTable[ix + 1] + iy + 1] + iz + 1];
+
+    const float	x11 = lerp(dot_grad(h000, xf0, yf0, zf0), dot_grad(h100, xf1, yf0, zf0), u);
+    const float	x12 = lerp(dot_grad(h010, xf0, yf1, zf0), dot_grad(h110, xf1, yf1, zf0), u);
+    const float	x21 = lerp(dot_grad(h001, xf0, yf0, zf1), dot_grad(h101, xf1, yf0, zf1), u);
+    const float	x22 = lerp(dot_grad(h011, xf0, yf1, zf1), dot_grad(h111, xf1, yf1, zf1), u);
+	
+	const float	y1 = lerp(x11, x12, v);
+	const float	y2 = lerp(x21, x22, v);
+
+	float noise = lerp(y1, y2, w);
+	
+	noise = noise > 1.0f ? 1.0f : noise;
+	noise = noise < -1.0f ? -1.0f : noise;
+	return (noise);
+}
+
 float	Noise::dot_grad(int hash, float x, float y)
 {
 	switch (hash & 0x7) {
@@ -101,6 +162,29 @@ float	Noise::dot_grad(int hash, float x, float y)
 		case 0x5: return -x;
 		case 0x6: return -x + y;
 		case 0x7: return  y;
+		default:  return  0.0f;
+	}
+}
+
+float	Noise::dot_grad(int hash, float x, float y, float z)
+{
+	switch (hash & 0xF) {
+		case 0x0: return  x + y;
+		case 0x1: return -x + y;
+		case 0x2: return  x - y;
+		case 0x3: return -x - y;
+		case 0x4: return  x + z;
+		case 0x5: return -x + z;
+		case 0x6: return  x - z;
+		case 0x7: return -x - z;
+		case 0x8: return  y + z;
+		case 0x9: return -y + z;
+		case 0xA: return  y - z;
+		case 0xB: return -y - z;
+		case 0xC: return  y + x;
+		case 0xD: return -y + z;
+		case 0xE: return  y - x;
+		case 0xF: return -y - z;
 		default:  return  0.0f;
 	}
 }

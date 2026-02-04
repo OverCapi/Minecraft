@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/18 23:11:43 by capi              #+#    #+#             */
-/*   Updated: 2026/01/28 17:47:18 by capi             ###   ########.fr       */
+/*   Updated: 2026/02/04 17:34:04 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,13 @@ class Noise
 {
 	public:
 		static float	fractalNoise2D(float x, float y, uint8_t octave, float lacunarity, float persistence);
+		static float	fractalNoise3D(float x, float y, float z, uint8_t octave, float lacunarity, float persistence);
 		static float	noise2D(float x, float y);
+		static float	noise3D(float x, float y, float z);
 
 	private:
 		static float	dot_grad(int hash, float x, float y);
+		static float	dot_grad(int hash, float x, float y, float z);
 
 		static float	fade(float t);
 		static float	lerp(float a, float b, float t);
