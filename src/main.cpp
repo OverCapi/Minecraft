@@ -19,7 +19,7 @@
 #define WIDTH 1920
 #define HEIGHT 1080
 
-float g_ImGui_speed = 15.0f;
+float g_ImGui_speed = 20.0f;
 int g_render_distance = 12;
 
 using namespace GL_Wrapper;

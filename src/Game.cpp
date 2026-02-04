@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/24 21:56:01 by capi              #+#    #+#             */
-/*   Updated: 2026/01/24 22:53:02 by capi             ###   ########.fr       */
+/*   Updated: 2026/02/04 16:30:24 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,11 @@ void	Game::init(void)
 	BlockManager::instanciateBlock("grass_block");	// 2
 	
 	// * Instanciate all textures
-	TextureManager::instanciateTexture("./assets/texture/block/dirt.png");		// 1
+	TextureManager::instanciateTexture("./assets/texture/block/dirt.png");			// 1
 	TextureManager::instanciateTexture("./assets/texture/block/grass_side.png");	// 2
-	TextureManager::instanciateTexture("./assets/texture/block/grass_top.png");	// 3
+	TextureManager::instanciateTexture("./assets/texture/block/grass_top.png");		// 3
 
+	//* Texture order : FRONT, BACK, RIGHT, LEFT, TOP, BOTTOM
 	TextureManager::instanciateTextureBlock(DIRT, {TEX_DIRT, TEX_DIRT, TEX_DIRT, TEX_DIRT, TEX_DIRT, TEX_DIRT} );
 	TextureManager::instanciateTextureBlock(GRASS_BLOCK, {TEX_GRASS_SIDE, TEX_GRASS_SIDE, TEX_GRASS_SIDE, TEX_GRASS_SIDE, TEX_GRASS_TOP, TEX_DIRT} );
 }

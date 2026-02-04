@@ -8,7 +8,6 @@ layout (location = 3) in uint 	aBlockId;
 out vec2	texCoord;
 out vec2	BlockId;
 
-uniform mat4 mode;
 uniform mat4 view;
 uniform mat4 projection;
 

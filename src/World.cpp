@@ -6,14 +6,14 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 14:46:29 by capi              #+#    #+#             */
-/*   Updated: 2026/01/29 01:37:04 by capi             ###   ########.fr       */
+/*   Updated: 2026/02/04 16:07:44 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "World.hpp"
 
 World::World(void)
-: _camera(glm::vec3(0, CHUNK_HEIGHT, 0), 0, 0), _renderDirstance(2) {}
+: _camera(glm::vec3(0, CHUNK_HEIGHT, 0), 0, 0), _renderDirstance(1) {}
 
 World::~World(void)
 {
@@ -58,7 +58,7 @@ void	World::update(float delta_time)
 
 				if (this->_chunkMap.find(generate_chunk_pos.z) == this->_chunkMap.end())
 				{
-					this->_chunkMap.insert(std::pair<int, std::map<int, Chunk*> >(generate_chunk_pos.z, std::map<int, Chunk*>()));
+					this->_chunkMap.insert(std::pair<int, std::unordered_map<int, Chunk*> >(generate_chunk_pos.z, std::unordered_map<int, Chunk*>()));
 					this->_chunkMap.at(generate_chunk_pos.z).insert(std::pair<int, Chunk*>(generate_chunk_pos.x, new Chunk(this, generate_chunk_pos)));
 					this->_chunkMap.at(generate_chunk_pos.z).at(generate_chunk_pos.x)->generate();
 					chunk++;

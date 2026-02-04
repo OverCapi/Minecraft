@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 14:46:27 by capi              #+#    #+#             */
-/*   Updated: 2026/01/29 02:15:32 by capi             ###   ########.fr       */
+/*   Updated: 2026/02/04 17:00:18 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,37 +51,76 @@ void	Chunk::generate(void)
 	}
 }
 
+bool	Chunk::isBlockVisible(int x, int y, int z) const
+{
+	return (this->_blocks[z][y][x] != AIR &&
+		(z == 0 || z == CHUNK_SIZE - 1 || y == 0 || y == CHUNK_HEIGHT - 1 || x == 0 || x == CHUNK_SIZE - 1
+		|| this->_blocks[z - 1][y][x] == AIR || this->_blocks[z + 1][y][x] == AIR
+		|| this->_blocks[z][y - 1][x] == AIR || this->_blocks[z][y + 1][x] == AIR
+		|| this->_blocks[z][y][x - 1] == AIR || this->_blocks[z][y][x + 1] == AIR));
+}
+
+bool	Chunk::isFaceVisible(int x, int y, int z, int faceId) const
+{
+	switch (faceId)
+	{
+		//* FRONT
+		case 0:
+			return ((this->_forward && z == CHUNK_SIZE - 1 && this->_forward->getBlock(x, y, 0) == AIR) || (z != CHUNK_SIZE - 1 && this->_blocks[z + 1][y][x] == AIR));
+		//* BACK
+		case 1:
+			return ((this->_backward && z == 0 && this->_backward->getBlock(x, y, CHUNK_SIZE - 1) == AIR) || (z != 0 && this->_blocks[z - 1][y][x] == AIR));
+		//* RIGHT
+		case 2:
+			return ((this->_right && x == CHUNK_SIZE - 1 && this->_right->getBlock(0, y, z) == AIR) || (x != CHUNK_SIZE - 1 && this->_blocks[z][y][x + 1] == AIR));
+		//* LEFT
+		case 3:
+			return ((this->_left && x == 0 && this->_left->getBlock(CHUNK_SIZE - 1, y, z) == AIR) || (x != 0 && this->_blocks[z][y][x - 1] == AIR));
+		//* UP
+		case 4:
+			return (y == CHUNK_HEIGHT - 1 || this->_blocks[z][y + 1][x] == AIR);
+		//* DOWN
+		case 5:
+			return (y != 0 && this->_blocks[z][y - 1][x] == AIR);
+		default:
+			return (false);
+	}
+}
+
+// size_t g_vertex = 0;
+// size_t g_indices = 0;
+// size_t g_call = 0;
+
 void	Chunk::render(void)
 {
 	// * GET CHUNK ARROUND
-	Chunk *forward = nullptr, *backward = nullptr, *right = nullptr, *left = nullptr;
 	
-	std::map<int, std::map<int, Chunk *> >& chunk_map = this->_associateWorld->getChunkMap();
+	std::unordered_map<int, std::unordered_map<int, Chunk *> >& chunk_map = this->_associateWorld->getChunkMap();
 
 	// * FORWARD chunk
-	if (chunk_map.find(this->_worldPos.z + CHUNK_SIZE) != chunk_map.end() 
+	if (!this->_forward && chunk_map.find(this->_worldPos.z + CHUNK_SIZE) != chunk_map.end() 
 		&& chunk_map.at(this->_worldPos.z + CHUNK_SIZE).find(this->_worldPos.x) != chunk_map.at(this->_worldPos.z + CHUNK_SIZE).end())
-		forward = chunk_map.at(this->_worldPos.z + CHUNK_SIZE).at(this->_worldPos.x);
+		this->_forward = chunk_map.at(this->_worldPos.z + CHUNK_SIZE).at(this->_worldPos.x);
 	// * BACKWARD chunk
-	if (chunk_map.find(this->_worldPos.z - CHUNK_SIZE) != chunk_map.end() 
+	if (!this->_backward && chunk_map.find(this->_worldPos.z - CHUNK_SIZE) != chunk_map.end() 
 		&& chunk_map.at(this->_worldPos.z - CHUNK_SIZE).find(this->_worldPos.x) != chunk_map.at(this->_worldPos.z - CHUNK_SIZE).end())
-		backward = chunk_map.at(this->_worldPos.z - CHUNK_SIZE).at(this->_worldPos.x);
+		this->_backward = chunk_map.at(this->_worldPos.z - CHUNK_SIZE).at(this->_worldPos.x);
 	// * RIGHT chunk
-	if (chunk_map.find(this->_worldPos.z) != chunk_map.end() 
+	if (!this->_right && chunk_map.find(this->_worldPos.z) != chunk_map.end() 
 		&& chunk_map.at(this->_worldPos.z).find(this->_worldPos.x + CHUNK_SIZE) != chunk_map.at(this->_worldPos.z).end())
-		right = chunk_map.at(this->_worldPos.z).at(this->_worldPos.x + CHUNK_SIZE);
+		this->_right = chunk_map.at(this->_worldPos.z).at(this->_worldPos.x + CHUNK_SIZE);
 	// * LEFT chunk
-	if (chunk_map.find(this->_worldPos.z) != chunk_map.end() 
+	if (!this->_left && chunk_map.find(this->_worldPos.z) != chunk_map.end() 
 		&& chunk_map.at(this->_worldPos.z).find(this->_worldPos.x - CHUNK_SIZE) != chunk_map.at(this->_worldPos.z).end())
-		left = chunk_map.at(this->_worldPos.z).at(this->_worldPos.x - CHUNK_SIZE);
+		this->_left = chunk_map.at(this->_worldPos.z).at(this->_worldPos.x - CHUNK_SIZE);
 
 	// * CREATE BLOCK VERTICES
 	std::vector<BlockVertex> blocks_vertices;
 	std::vector<unsigned int> vertices_indices;
-	size_t block_count = 0;
+	size_t face_count = 0;
 
-	blocks_vertices.reserve(210000);
-	vertices_indices.reserve(5000);
+	blocks_vertices.reserve(1800);
+	vertices_indices.reserve(2500);
 	for (size_t z = 0; z < CHUNK_SIZE; z++)
 	{
 		for (size_t y = 0; y < CHUNK_HEIGHT; y++)
@@ -89,83 +128,239 @@ void	Chunk::render(void)
 			for (size_t x = 0; x < CHUNK_SIZE; x++)
 			{
 				// * CHECK IF WE NEED TO RENDER BLOCK
-				if (this->_blocks[z][y][x] != AIR &&
-					(z == 0 || z == CHUNK_SIZE - 1 || y == 0 || y == CHUNK_HEIGHT - 1 || x == 0 || x == CHUNK_SIZE - 1
-					|| this->_blocks[z - 1][y][x] == AIR || this->_blocks[z + 1][y][x] == AIR
-					|| this->_blocks[z][y - 1][x] == AIR || this->_blocks[z][y + 1][x] == AIR
-					|| this->_blocks[z][y][x - 1] == AIR || this->_blocks[z][y][x + 1] == AIR))
+				if (this->isBlockVisible(x, y, z))
 				{
+					//* Texture order : FRONT, BACK, RIGHT, LEFT, TOP, BOTTOM
 					std::array<TextureId, 6>& textures = TextureManager::getBlockTextures(this->_blocks[z][y][x]);
-					for (size_t i = 0; i < 24; i++)
+				
+					//* FRONT
+					if (this->isFaceVisible(x, y, z, 0))
 					{
 						blocks_vertices.emplace_back(BlockVertex {
-							.vPos = { vertices[i * 5 + 0], vertices[i * 5 + 1], vertices[i * 5 + 2]},
-							.texCoord = { vertices[i * 5 + 3], vertices[i * 5 + 4] },
+							.vPos = { vertices[0 * 5 + 0], vertices[0 * 5 + 1], vertices[0 * 5 + 2]},
+							.texCoord = { vertices[0 * 5 + 3], vertices[0 * 5 + 4] },
 							.world_pos = { this->_worldPos.x + x, this->_worldPos.y + y, this->_worldPos.z + z },
-							.TextureId = textures.at((i * 5) / 20)
+							.TextureId = textures.at(0)
 						});
+						blocks_vertices.emplace_back(BlockVertex {
+							.vPos = { vertices[1 * 5 + 0], vertices[1 * 5 + 1], vertices[1 * 5 + 2]},
+							.texCoord = { vertices[1 * 5 + 3], vertices[1 * 5 + 4] },
+							.world_pos = { this->_worldPos.x + x, this->_worldPos.y + y, this->_worldPos.z + z },
+							.TextureId = textures.at(0)
+						});
+						blocks_vertices.emplace_back(BlockVertex {
+							.vPos = { vertices[2 * 5 + 0], vertices[2 * 5 + 1], vertices[2 * 5 + 2]},
+							.texCoord = { vertices[2 * 5 + 3], vertices[2 * 5 + 4] },
+							.world_pos = { this->_worldPos.x + x, this->_worldPos.y + y, this->_worldPos.z + z },
+							.TextureId = textures.at(0)
+						});
+						blocks_vertices.emplace_back(BlockVertex {
+							.vPos = { vertices[3 * 5 + 0], vertices[3 * 5 + 1], vertices[3 * 5 + 2]},
+							.texCoord = { vertices[3 * 5 + 3], vertices[3 * 5 + 4] },
+							.world_pos = { this->_worldPos.x + x, this->_worldPos.y + y, this->_worldPos.z + z },
+							.TextureId = textures.at(0)
+						});
+						vertices_indices.push_back(0 + face_count * 4);
+						vertices_indices.push_back(1 + face_count * 4);
+						vertices_indices.push_back(2 + face_count * 4);
+						vertices_indices.push_back(1 + face_count * 4);
+						vertices_indices.push_back(3 + face_count * 4);
+						vertices_indices.push_back(2 + face_count * 4);
+						face_count++;
 					}
-
-					for (size_t i = 0; i < 36; i++)
+					//* BACK
+					if (this->isFaceVisible(x, y, z, 1))
 					{
-						// * CHECK IF WE NEED TO RENDER FACE
-						size_t face_id = i / 6;
-						switch (face_id)
-						{
-							// * FRONT
-							case 0:
-								if ((forward && z == CHUNK_SIZE - 1 && forward->getBlock(x, y, 0) != AIR) || (z != CHUNK_SIZE - 1 && this->_blocks[z + 1][y][x] != AIR))
-									i += 5;
-								else
-									vertices_indices.push_back(indices[i] + (24 * block_count));
-								break;
-							// * BACK
-							case 1:
-								if ((backward && z == 0 && backward->getBlock(x, y, CHUNK_SIZE - 1) != AIR) || (z != 0 && this->_blocks[z - 1][y][x] != AIR))
-									i += 5;
-								else
-									vertices_indices.push_back(indices[i] + (24 * block_count));
-								break;
-							// * RIGHT
-							case 2:
-								if ((right && x == CHUNK_SIZE - 1 && right->getBlock(0, y, z) != AIR) || (x != CHUNK_SIZE - 1 && this->_blocks[z][y][x + 1] != AIR))
-									i += 5;
-								else
-									vertices_indices.push_back(indices[i] + (24 * block_count));
-								break;
-							// * LEFT
-							case 3:
-								if ((left && x == 0 && left->getBlock(CHUNK_SIZE - 1, y, z) != AIR) || (x != 0 && this->_blocks[z][y][x - 1] != AIR))
-									i += 5;
-								else
-									vertices_indices.push_back(indices[i] + (24 * block_count));
-								break;
-							// * TOP
-							case 4:
-								if (y != CHUNK_HEIGHT - 1 && this->_blocks[z][y + 1][x] != AIR)
-									i += 5;
-								else
-									vertices_indices.push_back(indices[i] + (24 * block_count));
-								break;
-							// * BOTTOM
-							case 5:
-								if (y != 0 && this->_blocks[z][y - 1][x] != AIR)
-									i += 5;
-								else
-									vertices_indices.push_back(indices[i] + (24 * block_count));
-								break;
-						}
+						blocks_vertices.emplace_back(BlockVertex {
+							.vPos = { vertices[4 * 5 + 0], vertices[4 * 5 + 1], vertices[4 * 5 + 2]},
+							.texCoord = { vertices[4 * 5 + 3], vertices[4 * 5 + 4] },
+							.world_pos = { this->_worldPos.x + x, this->_worldPos.y + y, this->_worldPos.z + z },
+							.TextureId = textures.at(1)
+						});
+						blocks_vertices.emplace_back(BlockVertex {
+							.vPos = { vertices[5 * 5 + 0], vertices[5 * 5 + 1], vertices[5 * 5 + 2]},
+							.texCoord = { vertices[5 * 5 + 3], vertices[5 * 5 + 4] },
+							.world_pos = { this->_worldPos.x + x, this->_worldPos.y + y, this->_worldPos.z + z },
+							.TextureId = textures.at(1)
+						});
+						blocks_vertices.emplace_back(BlockVertex {
+							.vPos = { vertices[6 * 5 + 0], vertices[6 * 5 + 1], vertices[6 * 5 + 2]},
+							.texCoord = { vertices[6 * 5 + 3], vertices[6 * 5 + 4] },
+							.world_pos = { this->_worldPos.x + x, this->_worldPos.y + y, this->_worldPos.z + z },
+							.TextureId = textures.at(1)
+						});
+						blocks_vertices.emplace_back(BlockVertex {
+							.vPos = { vertices[7 * 5 + 0], vertices[7 * 5 + 1], vertices[7 * 5 + 2]},
+							.texCoord = { vertices[7 * 5 + 3], vertices[7 * 5 + 4] },
+							.world_pos = { this->_worldPos.x + x, this->_worldPos.y + y, this->_worldPos.z + z },
+							.TextureId = textures.at(1)
+						});
+						vertices_indices.push_back(2 + face_count * 4);
+						vertices_indices.push_back(1 + face_count * 4);
+						vertices_indices.push_back(0 + face_count * 4);
+						vertices_indices.push_back(2 + face_count * 4);
+						vertices_indices.push_back(3 + face_count * 4);
+						vertices_indices.push_back(1 + face_count * 4);
+						face_count++;
 					}
-					block_count++;
+					//* RIGHT
+					if (this->isFaceVisible(x, y, z, 2))
+					{
+						blocks_vertices.emplace_back(BlockVertex {
+							.vPos = { vertices[8 * 5 + 0], vertices[8 * 5 + 1], vertices[8 * 5 + 2]},
+							.texCoord = { vertices[8 * 5 + 3], vertices[8 * 5 + 4] },
+							.world_pos = { this->_worldPos.x + x, this->_worldPos.y + y, this->_worldPos.z + z },
+							.TextureId = textures.at(2)
+						});
+						blocks_vertices.emplace_back(BlockVertex {
+							.vPos = { vertices[9 * 5 + 0], vertices[9 * 5 + 1], vertices[9 * 5 + 2]},
+							.texCoord = { vertices[9 * 5 + 3], vertices[9 * 5 + 4] },
+							.world_pos = { this->_worldPos.x + x, this->_worldPos.y + y, this->_worldPos.z + z },
+							.TextureId = textures.at(2)
+						});
+						blocks_vertices.emplace_back(BlockVertex {
+							.vPos = { vertices[10 * 5 + 0], vertices[10 * 5 + 1], vertices[10 * 5 + 2]},
+							.texCoord = { vertices[10 * 5 + 3], vertices[10 * 5 + 4] },
+							.world_pos = { this->_worldPos.x + x, this->_worldPos.y + y, this->_worldPos.z + z },
+							.TextureId = textures.at(2)
+						});
+						blocks_vertices.emplace_back(BlockVertex {
+							.vPos = { vertices[11 * 5 + 0], vertices[11 * 5 + 1], vertices[11 * 5 + 2]},
+							.texCoord = { vertices[11 * 5 + 3], vertices[11 * 5 + 4] },
+							.world_pos = { this->_worldPos.x + x, this->_worldPos.y + y, this->_worldPos.z + z },
+							.TextureId = textures.at(2)
+						});
+						vertices_indices.push_back(0 + face_count * 4);
+						vertices_indices.push_back(1 + face_count * 4);
+						vertices_indices.push_back(2 + face_count * 4);
+						vertices_indices.push_back(1 + face_count * 4);
+						vertices_indices.push_back(3 + face_count * 4);
+						vertices_indices.push_back(2 + face_count * 4);
+						face_count++;
+					}
+					//* LEFT
+					if (this->isFaceVisible(x, y, z, 3))
+					{
+						blocks_vertices.emplace_back(BlockVertex {
+							.vPos = { vertices[12 * 5 + 0], vertices[12 * 5 + 1], vertices[12 * 5 + 2]},
+							.texCoord = { vertices[12 * 5 + 3], vertices[12 * 5 + 4] },
+							.world_pos = { this->_worldPos.x + x, this->_worldPos.y + y, this->_worldPos.z + z },
+							.TextureId = textures.at(3)
+						});
+						blocks_vertices.emplace_back(BlockVertex {
+							.vPos = { vertices[13 * 5 + 0], vertices[13 * 5 + 1], vertices[13 * 5 + 2]},
+							.texCoord = { vertices[13 * 5 + 3], vertices[13 * 5 + 4] },
+							.world_pos = { this->_worldPos.x + x, this->_worldPos.y + y, this->_worldPos.z + z },
+							.TextureId = textures.at(3)
+						});
+						blocks_vertices.emplace_back(BlockVertex {
+							.vPos = { vertices[14 * 5 + 0], vertices[14 * 5 + 1], vertices[14 * 5 + 2]},
+							.texCoord = { vertices[14 * 5 + 3], vertices[14 * 5 + 4] },
+							.world_pos = { this->_worldPos.x + x, this->_worldPos.y + y, this->_worldPos.z + z },
+							.TextureId = textures.at(3)
+						});
+						blocks_vertices.emplace_back(BlockVertex {
+							.vPos = { vertices[15 * 5 + 0], vertices[15 * 5 + 1], vertices[15 * 5 + 2]},
+							.texCoord = { vertices[15 * 5 + 3], vertices[15 * 5 + 4] },
+							.world_pos = { this->_worldPos.x + x, this->_worldPos.y + y, this->_worldPos.z + z },
+							.TextureId = textures.at(3)
+						});
+						vertices_indices.push_back(2 + face_count * 4);
+						vertices_indices.push_back(1 + face_count * 4);
+						vertices_indices.push_back(0 + face_count * 4);
+						vertices_indices.push_back(2 + face_count * 4);
+						vertices_indices.push_back(3 + face_count * 4);
+						vertices_indices.push_back(1 + face_count * 4);
+						face_count++;
+					}
+					//* UP
+					if (this->isFaceVisible(x, y, z, 4))
+					{	
+						blocks_vertices.emplace_back(BlockVertex {
+							.vPos = { vertices[16 * 5 + 0], vertices[16 * 5 + 1], vertices[16 * 5 + 2]},
+							.texCoord = { vertices[16 * 5 + 3], vertices[16 * 5 + 4] },
+							.world_pos = { this->_worldPos.x + x, this->_worldPos.y + y, this->_worldPos.z + z },
+							.TextureId = textures.at(4)
+						});
+						blocks_vertices.emplace_back(BlockVertex {
+							.vPos = { vertices[17 * 5 + 0], vertices[17 * 5 + 1], vertices[17 * 5 + 2]},
+							.texCoord = { vertices[17 * 5 + 3], vertices[17 * 5 + 4] },
+							.world_pos = { this->_worldPos.x + x, this->_worldPos.y + y, this->_worldPos.z + z },
+							.TextureId = textures.at(4)
+						}); 
+						blocks_vertices.emplace_back(BlockVertex {
+							.vPos = { vertices[18 * 5 + 0], vertices[18 * 5 + 1], vertices[18 * 5 + 2]},
+							.texCoord = { vertices[18 * 5 + 3], vertices[18 * 5 + 4] },
+							.world_pos = { this->_worldPos.x + x, this->_worldPos.y + y, this->_worldPos.z + z },
+							.TextureId = textures.at(4)
+						});
+						blocks_vertices.emplace_back(BlockVertex {
+							.vPos = { vertices[19 * 5 + 0], vertices[19 * 5 + 1], vertices[19 * 5 + 2]},
+							.texCoord = { vertices[19 * 5 + 3], vertices[19 * 5 + 4] },
+							.world_pos = { this->_worldPos.x + x, this->_worldPos.y + y, this->_worldPos.z + z },
+							.TextureId = textures.at(4)
+						});
+						vertices_indices.push_back(0 + face_count * 4);
+						vertices_indices.push_back(1 + face_count * 4);
+						vertices_indices.push_back(2 + face_count * 4);
+						vertices_indices.push_back(1 + face_count * 4);
+						vertices_indices.push_back(3 + face_count * 4);
+						vertices_indices.push_back(2 + face_count * 4);
+						face_count++;
+					}
+					//* DOWN
+					if (this->isFaceVisible(x, y, z, 5))
+					{
+						blocks_vertices.emplace_back(BlockVertex {
+							.vPos = { vertices[20 * 5 + 0], vertices[20 * 5 + 1], vertices[20 * 5 + 2]},
+							.texCoord = { vertices[20 * 5 + 3], vertices[20 * 5 + 4] },
+							.world_pos = { this->_worldPos.x + x, this->_worldPos.y + y, this->_worldPos.z + z },
+							.TextureId = textures.at(5)
+						});
+						blocks_vertices.emplace_back(BlockVertex {
+							.vPos = { vertices[21 * 5 + 0], vertices[21 * 5 + 1], vertices[21 * 5 + 2]},
+							.texCoord = { vertices[21 * 5 + 3], vertices[21 * 5 + 4] },
+							.world_pos = { this->_worldPos.x + x, this->_worldPos.y + y, this->_worldPos.z + z },
+							.TextureId = textures.at(5)
+						});
+						blocks_vertices.emplace_back(BlockVertex {
+							.vPos = { vertices[22 * 5 + 0], vertices[22 * 5 + 1], vertices[22 * 5 + 2]},
+							.texCoord = { vertices[22 * 5 + 3], vertices[22 * 5 + 4] },
+							.world_pos = { this->_worldPos.x + x, this->_worldPos.y + y, this->_worldPos.z + z },
+							.TextureId = textures.at(5)
+						});
+						blocks_vertices.emplace_back(BlockVertex {
+							.vPos = { vertices[23 * 5 + 0], vertices[23 * 5 + 1], vertices[23 * 5 + 2]},
+							.texCoord = { vertices[23 * 5 + 3], vertices[23 * 5 + 4] },
+							.world_pos = { this->_worldPos.x + x, this->_worldPos.y + y, this->_worldPos.z + z },
+							.TextureId = textures.at(5)
+						});
+						vertices_indices.push_back(2 + face_count * 4);
+						vertices_indices.push_back(1 + face_count * 4);
+						vertices_indices.push_back(0 + face_count * 4);
+						vertices_indices.push_back(2 + face_count * 4);
+						vertices_indices.push_back(3 + face_count * 4);
+						vertices_indices.push_back(1 + face_count * 4);
+						face_count++;
+					}
 				}
 			}
 		}
 	}
+
+	
 	this->_verticesToRender = vertices_indices.size();
 	this->_vb = new GL_Wrapper::VertexBuffer(blocks_vertices.data(), sizeof(BlockVertex) * blocks_vertices.size());
 	this->_eb = new GL_Wrapper::ElementBuffer(vertices_indices.data(), this->_verticesToRender);
 	this->_va = new GL_Wrapper::VertexArray();
-
+	
+	// g_indices += this->_verticesToRender;
+	// g_vertex += blocks_vertices.size();
+	// g_call += 1;
+	
+	// std::cout << "vertex (avg) : " << g_vertex / g_call << std::endl;
+	// std::cout << "vertices indices (avg) : " << g_indices / g_call << std::endl;
+	
 	GL_Wrapper::Layout layout_vpos = {GL_FLOAT, 3, GL_FALSE};
 	GL_Wrapper::Layout layout_texture_coord = {GL_FLOAT, 2, GL_FALSE};
 	GL_Wrapper::Layout layout_wpos = {GL_FLOAT, 3, GL_FALSE};

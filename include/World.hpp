@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 14:46:40 by capi              #+#    #+#             */
-/*   Updated: 2026/01/27 02:01:21 by capi             ###   ########.fr       */
+/*   Updated: 2026/02/03 16:01:49 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ class World
 		int		getRenderDistance(void) { return (this->_renderDirstance); };
 		void	setRenderDistance(int renderDistance) { if (renderDistance > 0) { this->_renderDirstance = renderDistance;} };
 		
-		std::map<int, std::map<int, Chunk*> >&	getChunkMap(void) { return (this->_chunkMap); };
+		std::unordered_map<int, std::unordered_map<int, Chunk*> >&	getChunkMap(void) { return (this->_chunkMap); };
 		
 		void	update(float delta_time);
 
@@ -47,7 +47,7 @@ class World
 		Camera	_camera;
 
 		int	_renderDirstance;
-		std::map<int, std::map<int, Chunk*> > _chunkMap;
+		std::unordered_map<int, std::unordered_map<int, Chunk*> > _chunkMap;
 
 		TerrainGenerator	_terrainGenerator;		
 };
