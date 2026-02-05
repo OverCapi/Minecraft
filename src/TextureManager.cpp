@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/24 21:32:34 by capi              #+#    #+#             */
-/*   Updated: 2026/01/24 22:52:25 by capi             ###   ########.fr       */
+/*   Updated: 2026/02/05 17:18:09 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	TextureManager::instanciateTextureBlock(unsigned int blokcId, const std::ar
 	TextureManager::blocksTexturesMap.insert(std::pair<unsigned int, std::array<TextureId, 6> >(blokcId, texturesIds));
 }
 
-std::array<TextureId, 6>&	TextureManager::getBlockTextures(unsigned int blockId)
+const std::array<TextureId, 6>&	TextureManager::getBlockTextures(unsigned int blockId)
 {
 	return (TextureManager::blocksTexturesMap.at(blockId));
 }

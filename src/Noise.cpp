@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/18 23:13:19 by capi              #+#    #+#             */
-/*   Updated: 2026/02/04 17:35:32 by capi             ###   ########.fr       */
+/*   Updated: 2026/02/04 18:18:44 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ float	Noise::fractalNoise3D(float x, float y, float z, uint8_t octave, float lac
 		frequency *= lacunarity;
 		amplitude *= persistence;
 	}
-	return (result / sum_amplitude);	
+	return (result / sum_amplitude);
 }
 
 float	Noise::noise2D(float x, float y)

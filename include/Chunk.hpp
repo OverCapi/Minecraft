@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 14:47:06 by capi              #+#    #+#             */
-/*   Updated: 2026/02/04 16:31:44 by capi             ###   ########.fr       */
+/*   Updated: 2026/02/05 17:01:00 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,20 +74,20 @@ const float vertices[] = {
 
 class World;
 
-typedef struct BlockVertex
-{
-	float		vPos[3];
-	float		texCoord[2];
-	float		world_pos[3];
-	TextureId	TextureId;
-}	BlockVertex;
-
 // typedef struct BlockVertex
 // {
-// 	float		world_pos[3];
+// 	float		vPos[3];
 // 	float		texCoord[2];
+// 	float		world_pos[3];
 // 	TextureId	TextureId;
 // }	BlockVertex;
+
+typedef struct BlockVertex
+{
+	float		world_pos[3];
+	float		texCoord[2];
+	TextureId	TextureId;
+}	BlockVertex;
 
 class Chunk
 {

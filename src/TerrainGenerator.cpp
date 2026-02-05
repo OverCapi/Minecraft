@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/27 00:16:59 by capi              #+#    #+#             */
-/*   Updated: 2026/01/29 02:25:16 by capi             ###   ########.fr       */
+/*   Updated: 2026/02/05 16:56:03 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,8 @@ _heightVariation(NoiseParam(4, 2.0f, 0.5f, CHUNK_SIZE * 10.0f))
 	this->_baseHeightSpline.addPoint(0.0, 80);
 	this->_baseHeightSpline.addPoint(0.2, 100);
 	this->_baseHeightSpline.addPoint(0.5, 125);
-	this->_baseHeightSpline.addPoint(0.7, 150);
-	this->_baseHeightSpline.addPoint(1.0, 150);
+	this->_baseHeightSpline.addPoint(0.7, 200);
+	this->_baseHeightSpline.addPoint(1.0, 200);
 
 	this->_variationHeightSpline.addPoint(-1, 20);
 	this->_variationHeightSpline.addPoint(-0.5, 20);

@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/23 19:13:21 by capi              #+#    #+#             */
-/*   Updated: 2026/01/24 22:52:07 by capi             ###   ########.fr       */
+/*   Updated: 2026/02/05 17:18:06 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,10 @@ class TextureManager
 		static unsigned int	instanciateTexture(const char* filename);
 		//* Texture order : FRONT, BACK, RIGHT, LEFT, TOP, BOTTOM
 		static void			instanciateTextureBlock(unsigned int blockId, const std::array<TextureId, 6>& texturesIds);
-		static std::array<TextureId, 6>&	getBlockTextures(unsigned int blockId);
+		static const std::array<TextureId, 6>&	getBlockTextures(unsigned int blockId);
 
 		static unsigned int														texturesId;
-		static GL_Wrapper::Texture2DArray*											textures;
+		static GL_Wrapper::Texture2DArray*										textures;
 
 		static std::unordered_map<unsigned int, std::array<TextureId, 6> >	blocksTexturesMap;
 };

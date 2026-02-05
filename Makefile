@@ -64,7 +64,7 @@ OBJS			= $(addprefix ${OBJS_DIR}, $(SRCS_CPP:.cpp=.o)) \
 
 TARGET = ft_minecraft
 
-COMMON_FLAG = -Wall -Wextra -Werror -g3
+COMMON_FLAG = -Wall -Wextra -Werror -g3 -O3
 FRAMEWORKS = -framework Cocoa -framework OpenGL -framework IOKit
 
 all: ${OBJS_DIR} ${TARGET}
