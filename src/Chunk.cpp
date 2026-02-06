@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 14:46:27 by capi              #+#    #+#             */
-/*   Updated: 2026/02/05 17:25:55 by capi             ###   ########.fr       */
+/*   Updated: 2026/02/06 18:38:40 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	Chunk::generate(void)
 
 	// * GENERATE MAP HEIGHT
 	for (size_t z = 0; z < CHUNK_SIZE; z++)
-	{
+	{            
 		for (size_t x = 0; x < CHUNK_SIZE; x++)
 		{
 			const float wx = this->_worldPos.x + x;
@@ -42,15 +42,11 @@ void	Chunk::generate(void)
 
 			for (size_t y = 0; y < CHUNK_HEIGHT; y++)
 			{
-				// float density = Noise::fractalNoise3D(this->_worldPos.x + x, this->_worldPos.y + y, this->_worldPos.z + z, 1, 2.0f, 0.5f);
-				// density = (density + 1.0f) / 2.0f;
-				if ((float)y < height)
+				float density = Noise::fractalNoise3D((this->_worldPos.x + x) / (16.0f * 4.0f), (this->_worldPos.y + y) / (16.0f * 4.0f), (this->_worldPos.z + z) / (16.0f * 4.0f), 4, 2.0f, 0.5f);
+				density = (density + 1.0f) / 2.0f;
+				if ((float)y < height && density >= 0.5f)
 				{
 					this->_blocks[z][y][x] = GRASS_BLOCK;
-					// if (density < 0.5f)
-					// 	this->_blocks[z][y][x] = GRASS_BLOCK;
-					// else
-					// 	this->_blocks[z][y][x] = AIR;
 				}
 				else
 					this->_blocks[z][y][x] = AIR;

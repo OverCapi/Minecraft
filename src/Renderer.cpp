@@ -6,7 +6,7 @@
 /*   By: capi <capi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 20:06:07 by capi              #+#    #+#             */
-/*   Updated: 2026/02/04 16:31:24 by capi             ###   ########.fr       */
+/*   Updated: 2026/02/05 17:29:54 by capi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	Renderer::render(World& world)
 
 	std::unordered_map<int, std::unordered_map<int, Chunk*> >& chunk_map = world.getChunkMap();	
 	
-	chunk_map.at(0).at(0)->draw(this->_shader);
+	// chunk_map.at(0).at(0)->draw(this->_shader);
 
 	/*
 		For render distance of 2:
